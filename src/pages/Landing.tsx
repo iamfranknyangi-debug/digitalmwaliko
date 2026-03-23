@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Send, QrCode, BarChart3, Users, CreditCard, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const features = [
   { icon: CreditCard, title: 'Beautiful Card Creator', desc: 'Design stunning invitation cards with pre-made templates for weddings, birthdays, and corporate events.' },
@@ -13,6 +14,11 @@ const features = [
 ];
 
 export default function Landing() {
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
+  if (user) return <Navigate to="/dashboard" replace />;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
