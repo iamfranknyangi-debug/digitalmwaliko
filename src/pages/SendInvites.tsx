@@ -74,7 +74,7 @@ export default function SendInvites() {
       user_id: user.id,
       sent_via: sendMethod,
       status: 'sent' as const,
-      qr_code: `QR-${uuidv4().slice(0, 8).toUpperCase()}`,
+      qr_code: `QR-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
       sent_at: new Date().toISOString(),
     }));
 
