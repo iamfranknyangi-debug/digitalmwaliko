@@ -12,7 +12,7 @@ import { MessageSquare, Phone, Send, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { v4 as uuidv4 } from 'uuid';
+
 
 interface ContactRow {
   id: string;
