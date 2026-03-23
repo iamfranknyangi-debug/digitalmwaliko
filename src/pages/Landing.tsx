@@ -1,7 +1,7 @@
 import { Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Send, QrCode, BarChart3, Users, CreditCard, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Send, QrCode, BarChart3, Users, CreditCard, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const features = [
