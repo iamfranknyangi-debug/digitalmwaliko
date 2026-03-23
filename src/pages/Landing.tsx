@@ -16,6 +16,11 @@ const features = [
 ];
 
 export default function Landing() {
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
+  if (user) return <Navigate to="/dashboard" replace />;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
