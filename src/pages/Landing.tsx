@@ -1,7 +1,7 @@
 import { Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Send, QrCode, BarChart3, Users, CreditCard, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Send, QrCode, BarChart3, Users, CreditCard, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const features = [
@@ -16,7 +16,14 @@ const features = [
 export default function Landing() {
   const { user, loading } = useAuth();
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   if (user) return <Navigate to="/dashboard" replace />;
 
   return (
