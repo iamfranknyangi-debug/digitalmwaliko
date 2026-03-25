@@ -27,7 +27,7 @@ export default function Register() {
     try {
       await signUp(email, password, fullName);
       toast.success('Account created! Karibu! Check your email to confirm.');
-      navigate('/dashboard');
+      navigate('/login');
     } catch (error: any) {
       toast.error(error.message || 'Failed to create account');
     } finally {
