@@ -41,8 +41,8 @@ export default function Landing() {
             <Link to="/login">
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>
-            <Link to="/register">
-              <Button size="sm" className="gap-1">Get Started <ArrowRight className="w-4 h-4" /></Button>
+            <Link to="/login">
+              <Button size="sm" className="gap-1">Sign In <ArrowRight className="w-4 h-4" /></Button>
             </Link>
           </div>
         </div>
@@ -69,14 +69,9 @@ export default function Landing() {
                 Create beautiful invitation cards, send via WhatsApp & SMS, track RSVPs, and verify guests with QR codes — all in one platform.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/register">
-                  <Button size="lg" className="text-base px-8 gap-2 glow">
-                    Start Creating <ArrowRight className="w-5 h-5" />
-                  </Button>
-                </Link>
                 <Link to="/login">
-                  <Button size="lg" variant="outline" className="text-base px-8 border-white/20 text-white hover:bg-white/10">
-                    View Demo
+                  <Button size="lg" className="text-base px-8 gap-2 glow">
+                    Sign In <ArrowRight className="w-5 h-5" />
                   </Button>
                 </Link>
               </div>
@@ -120,9 +115,9 @@ export default function Landing() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">Ready to Elevate Your Events?</h2>
           <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">Join thousands of event planners across Tanzania using FN's Digital Cards.</p>
-          <Link to="/register">
+          <Link to="/login">
             <Button size="lg" className="text-base px-8 gap-2 glow">
-              Get Started Free <ArrowRight className="w-5 h-5" />
+              Sign In <ArrowRight className="w-5 h-5" />
             </Button>
           </Link>
         </div>
