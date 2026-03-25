@@ -114,7 +114,7 @@ export default function Landing() {
       <section className="py-20" style={{ background: 'var(--gradient-hero)' }}>
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">Ready to Elevate Your Events?</h2>
-          <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">Join thousands of event planners across Tanzania using Mwaliko Digital.</p>
+          <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">Join thousands of event planners using Digital Mwaliko.</p>
           <Link to="/login">
             <Button size="lg" className="text-base px-8 gap-2 glow">
               Sign In <ArrowRight className="w-5 h-5" />
