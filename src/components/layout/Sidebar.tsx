@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
@@ -31,6 +32,13 @@ const navItems = [
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
     <aside
@@ -80,7 +88,7 @@ export function Sidebar() {
           variant="ghost"
           size="sm"
           className="w-full justify-start gap-3 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
-          onClick={() => {}}
+          onClick={handleLogout}
         >
           <LogOut className="w-5 h-5 shrink-0" />
           {!collapsed && <span>Logout</span>}
