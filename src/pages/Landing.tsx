@@ -115,9 +115,9 @@ export default function Landing() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">Ready to Elevate Your Events?</h2>
           <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">Join thousands of event planners across Tanzania using FN's Digital Cards.</p>
-          <Link to="/register">
+          <Link to="/login">
             <Button size="lg" className="text-base px-8 gap-2 glow">
-              Get Started Free <ArrowRight className="w-5 h-5" />
+              Sign In <ArrowRight className="w-5 h-5" />
             </Button>
           </Link>
         </div>

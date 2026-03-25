@@ -7,7 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
+import AdminUsers from "./pages/AdminUsers";
 import Dashboard from "./pages/Dashboard";
 import CardCreator from "./pages/CardCreator";
 import Events from "./pages/Events";
