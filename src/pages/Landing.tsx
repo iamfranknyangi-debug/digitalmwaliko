@@ -69,14 +69,9 @@ export default function Landing() {
                 Create beautiful invitation cards, send via WhatsApp & SMS, track RSVPs, and verify guests with QR codes — all in one platform.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/register">
-                  <Button size="lg" className="text-base px-8 gap-2 glow">
-                    Start Creating <ArrowRight className="w-5 h-5" />
-                  </Button>
-                </Link>
                 <Link to="/login">
-                  <Button size="lg" variant="outline" className="text-base px-8 border-white/20 text-white hover:bg-white/10">
-                    View Demo
+                  <Button size="lg" className="text-base px-8 gap-2 glow">
+                    Sign In <ArrowRight className="w-5 h-5" />
                   </Button>
                 </Link>
               </div>
