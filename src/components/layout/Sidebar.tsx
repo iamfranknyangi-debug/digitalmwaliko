@@ -16,6 +16,7 @@ import {
   ChevronRight,
   LogOut,
   Sparkles,
+  Shield,
   X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
