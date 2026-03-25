@@ -35,7 +35,7 @@ export default function Landing() {
             <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-display text-xl font-bold">FN's Digital Cards</span>
+            <span className="font-display text-xl font-bold">Mwaliko Digital</span>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/login">
