@@ -20,7 +20,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
           <Menu className="w-5 h-5" />
         </Button>
-        <span className="font-display font-bold ml-2">FN's Digital Cards</span>
+        <span className="font-display font-bold ml-2">Mwaliko Digital</span>
       </div>
 
       <main className="lg:ml-64 p-4 pt-18 lg:p-6 lg:pt-6">
