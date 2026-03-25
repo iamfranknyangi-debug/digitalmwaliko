@@ -15,6 +15,7 @@ import {
   ChevronRight,
   LogOut,
   Sparkles,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -29,7 +30,12 @@ const navItems = [
   { icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  mobileOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -40,23 +46,39 @@ export function Sidebar() {
     navigate('/');
   };
 
+  const handleNavClick = () => {
+    onClose?.();
+  };
+
   return (
     <aside
       className={cn(
         'fixed left-0 top-0 z-40 h-screen bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 flex flex-col',
-        collapsed ? 'w-[72px]' : 'w-64'
+        // Desktop
+        'hidden lg:flex',
+        collapsed ? 'lg:w-[72px]' : 'lg:w-64',
+        // Mobile
+        mobileOpen && 'flex w-64'
       )}
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-sidebar-border">
-        <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center shrink-0">
-          <Sparkles className="w-5 h-5 text-primary-foreground" />
-        </div>
-        {!collapsed && (
-          <div className="overflow-hidden">
-            <h1 className="font-display text-lg font-bold text-sidebar-foreground leading-tight">FN's</h1>
-            <p className="text-[10px] text-sidebar-foreground/60 tracking-wider uppercase">Digital Cards</p>
+      <div className="flex items-center justify-between gap-3 px-4 h-16 border-b border-sidebar-border">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center shrink-0">
+            <Sparkles className="w-5 h-5 text-primary-foreground" />
           </div>
+          {!collapsed && (
+            <div className="overflow-hidden">
+              <h1 className="font-display text-lg font-bold text-sidebar-foreground leading-tight">FN's</h1>
+              <p className="text-[10px] text-sidebar-foreground/60 tracking-wider uppercase">Digital Cards</p>
+            </div>
+          )}
+        </div>
+        {/* Mobile close button */}
+        {mobileOpen && (
+          <Button variant="ghost" size="icon" className="lg:hidden text-sidebar-foreground" onClick={onClose}>
+            <X className="w-5 h-5" />
+          </Button>
         )}
       </div>
 
@@ -68,6 +90,7 @@ export function Sidebar() {
             <Link
               key={item.path}
               to={item.path}
+              onClick={handleNavClick}
               className={cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
                 isActive
@@ -96,7 +119,7 @@ export function Sidebar() {
         <Button
           variant="ghost"
           size="icon"
-          className="w-full text-sidebar-foreground/50 hover:text-sidebar-foreground"
+          className="w-full text-sidebar-foreground/50 hover:text-sidebar-foreground hidden lg:flex"
           onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
