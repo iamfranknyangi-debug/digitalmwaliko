@@ -59,7 +59,7 @@ export default function Landing() {
               transition={{ duration: 0.7 }}
             >
               <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase bg-primary/20 text-primary mb-6">
-                🇹🇿 Made for Tanzania
+                ✨ Digital Invitations, Simplified
               </span>
               <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
                 Digital Invitations,{' '}
