@@ -128,9 +128,9 @@ export default function Landing() {
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary" />
-            <span className="font-display font-bold">Mwaliko Digital</span>
+            <span className="font-display font-bold">Digital Mwaliko</span>
           </div>
-          <p className="text-sm text-muted-foreground">© 2026 Mwaliko Digital. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">© 2026 Digital Mwaliko. All rights reserved.</p>
         </div>
       </footer>
     </div>
