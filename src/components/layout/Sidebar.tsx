@@ -78,8 +78,8 @@ export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
           </div>
           {!collapsed && (
             <div className="overflow-hidden">
-              <h1 className="font-display text-lg font-bold text-sidebar-foreground leading-tight">FN's</h1>
-              <p className="text-[10px] text-sidebar-foreground/60 tracking-wider uppercase">Digital Cards</p>
+              <h1 className="font-display text-lg font-bold text-sidebar-foreground leading-tight">Digital</h1>
+              <p className="text-[10px] text-sidebar-foreground/60 tracking-wider uppercase">Mwaliko</p>
             </div>
           )}
         </div>

@@ -35,7 +35,7 @@ export default function Landing() {
             <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-display text-xl font-bold">Mwaliko Digital</span>
+            <span className="font-display text-xl font-bold">Digital Mwaliko</span>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/login">
@@ -114,7 +114,7 @@ export default function Landing() {
       <section className="py-20" style={{ background: 'var(--gradient-hero)' }}>
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">Ready to Elevate Your Events?</h2>
-          <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">Join thousands of event planners across Tanzania using Mwaliko Digital.</p>
+          <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">Join thousands of event planners using Digital Mwaliko.</p>
           <Link to="/login">
             <Button size="lg" className="text-base px-8 gap-2 glow">
               Sign In <ArrowRight className="w-5 h-5" />
@@ -128,9 +128,9 @@ export default function Landing() {
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary" />
-            <span className="font-display font-bold">Mwaliko Digital</span>
+            <span className="font-display font-bold">Digital Mwaliko</span>
           </div>
-          <p className="text-sm text-muted-foreground">© 2026 Mwaliko Digital. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">© 2026 Digital Mwaliko. All rights reserved.</p>
         </div>
       </footer>
     </div>
