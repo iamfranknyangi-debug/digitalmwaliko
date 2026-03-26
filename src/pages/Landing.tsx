@@ -117,7 +117,7 @@ export default function Landing() {
           <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">Join thousands of event planners using Digital Mwaliko.</p>
           <Link to="/login">
             <Button size="lg" className="text-base px-8 gap-2 glow">
-              Sign In <ArrowRight className="w-5 h-5" />
+              Get Started <ArrowRight className="w-5 h-5" />
             </Button>
           </Link>
         </div>
