@@ -42,7 +42,7 @@ export default function Landing() {
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>
             <Link to="/login">
-              <Button size="sm" className="gap-1">Sign In <ArrowRight className="w-4 h-4" /></Button>
+              <Button size="sm" className="gap-1">Get Started <ArrowRight className="w-4 h-4" /></Button>
             </Link>
           </div>
         </div>
