@@ -1,12 +1,13 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, Mail, Lock, User, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Sparkles, Mail, Lock, User, Eye, EyeOff, Loader2, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,8 +15,38 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const [adminExists, setAdminExists] = useState(false);
   const navigate = useNavigate();
-  const { signUp } = useAuth();
+  const { signUp, user, loading } = useAuth();
+
+  useEffect(() => {
+    const checkAdminExists = async () => {
+      const { data } = await supabase
+        .from('user_roles')
+        .select('id')
+        .eq('role', 'admin')
+        .limit(1);
+      setAdminExists(!!data && data.length > 0);
+      setChecking(false);
+    };
+    checkAdminExists();
+  }, []);
+
+  if (loading || checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (user) return <Navigate to="/dashboard" replace />;
+
+  // If admin already exists, registration is closed — redirect to login
+  if (adminExists) {
+    return <Navigate to="/login" replace />;
+  }
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +57,7 @@ export default function Register() {
     setIsLoading(true);
     try {
       await signUp(email, password, fullName);
-      toast.success('Account created! Karibu! Check your email to confirm.');
+      toast.success('Admin account created! Please check your email to verify, then sign in.');
       navigate('/login');
     } catch (error: any) {
       toast.error(error.message || 'Failed to create account');
@@ -46,8 +77,12 @@ export default function Register() {
               </div>
             </Link>
             <div>
-              <CardTitle className="font-display text-2xl">Create Account</CardTitle>
-              <CardDescription>Start creating beautiful digital invitations</CardDescription>
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <ShieldCheck className="w-5 h-5 text-primary" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-primary">First-Time Setup</span>
+              </div>
+              <CardTitle className="font-display text-2xl">Create Admin Account</CardTitle>
+              <CardDescription>Set up the first administrator for Digital Mwaliko</CardDescription>
             </div>
           </CardHeader>
           <CardContent>
@@ -78,7 +113,7 @@ export default function Register() {
               </div>
               <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                Create Account
+                Create Admin Account
               </Button>
             </form>
             <p className="text-center text-sm text-muted-foreground mt-6">
