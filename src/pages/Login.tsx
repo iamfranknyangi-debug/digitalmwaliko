@@ -79,9 +79,14 @@ export default function Login() {
                 Sign In
               </Button>
             </form>
-            <p className="text-center text-sm text-muted-foreground mt-6">
-              Contact your administrator for account access.
-            </p>
+            <div className="text-center mt-6 space-y-2">
+              <Link to="/forgot-password" className="text-sm text-primary font-medium hover:underline">
+                Forgot your password?
+              </Link>
+              <p className="text-sm text-muted-foreground">
+                Contact your administrator for account access.
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
