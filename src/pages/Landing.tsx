@@ -42,7 +42,7 @@ export default function Landing() {
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>
             <Link to="/login">
-              <Button size="sm" className="gap-1">Sign In <ArrowRight className="w-4 h-4" /></Button>
+              <Button size="sm" className="gap-1">Get Started <ArrowRight className="w-4 h-4" /></Button>
             </Link>
           </div>
         </div>
@@ -71,7 +71,7 @@ export default function Landing() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/login">
                   <Button size="lg" className="text-base px-8 gap-2 glow">
-                    Sign In <ArrowRight className="w-5 h-5" />
+                    Get Started <ArrowRight className="w-5 h-5" />
                   </Button>
                 </Link>
               </div>
@@ -117,7 +117,7 @@ export default function Landing() {
           <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">Join thousands of event planners using Digital Mwaliko.</p>
           <Link to="/login">
             <Button size="lg" className="text-base px-8 gap-2 glow">
-              Sign In <ArrowRight className="w-5 h-5" />
+              Get Started <ArrowRight className="w-5 h-5" />
             </Button>
           </Link>
         </div>
