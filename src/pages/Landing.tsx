@@ -138,7 +138,7 @@ export default function Landing() {
               </div>
               <p className="text-muted-foreground text-sm mb-6">per invitation</p>
               <ul className="space-y-3 mb-8">
-                {['Up to 50 SMS invitations', 'Basic card templates', 'QR code verification', 'RSVP tracking', 'Email support'].map((f) => (
+                {['Up to 150 SMS invitations', 'Basic card templates', 'QR code verification', 'RSVP tracking', 'Email support'].map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm">
                     <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                     <span>{f}</span>
