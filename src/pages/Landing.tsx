@@ -110,7 +110,113 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Pricing */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Choose the package that fits your event. No hidden fees.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Basic */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0 }}
+              className="relative p-8 rounded-2xl border border-border bg-card hover:shadow-lg transition-all duration-300"
+            >
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                <Zap className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-display text-xl font-bold mb-1">Starter</h3>
+              <div className="flex items-baseline gap-1 mb-1">
+                <span className="font-display text-4xl font-bold">800</span>
+                <span className="text-muted-foreground text-sm">TZS</span>
+              </div>
+              <p className="text-muted-foreground text-sm mb-6">per invitation</p>
+              <ul className="space-y-3 mb-8">
+                {['Up to 50 SMS invitations', 'Basic card templates', 'QR code verification', 'RSVP tracking', 'Email support'].map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm">
+                    <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link to="/login">
+                <Button variant="outline" className="w-full">Get Started</Button>
+              </Link>
+            </motion.div>
+
+            {/* Standard */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="relative p-8 rounded-2xl border-2 border-primary bg-card shadow-xl scale-[1.02]"
+            >
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="bg-primary text-primary-foreground text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wider">
+                  Popular
+                </span>
+              </div>
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                <Star className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-display text-xl font-bold mb-1">Standard</h3>
+              <div className="flex items-baseline gap-1 mb-1">
+                <span className="font-display text-4xl font-bold">1,500</span>
+                <span className="text-muted-foreground text-sm">TZS</span>
+              </div>
+              <p className="text-muted-foreground text-sm mb-6">per invitation</p>
+              <ul className="space-y-3 mb-8">
+                {['Up to 150 SMS invitations', 'Premium card templates', 'QR code verification', 'Real-time RSVP dashboard', 'Bulk contact import (CSV)', 'Priority support'].map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm">
+                    <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link to="/login">
+                <Button className="w-full glow">Get Started</Button>
+              </Link>
+            </motion.div>
+
+            {/* Premium */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="relative p-8 rounded-2xl border border-border bg-card hover:shadow-lg transition-all duration-300"
+            >
+              <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center mb-4">
+                <Crown className="w-6 h-6 text-accent-foreground" />
+              </div>
+              <h3 className="font-display text-xl font-bold mb-1">Premium</h3>
+              <div className="flex items-baseline gap-1 mb-1">
+                <span className="font-display text-4xl font-bold">2,000</span>
+                <span className="text-muted-foreground text-sm">TZS</span>
+              </div>
+              <p className="text-muted-foreground text-sm mb-6">per invitation</p>
+              <ul className="space-y-3 mb-8">
+                {['Unlimited SMS invitations', 'Exclusive premium templates', 'Custom card design support', 'QR code + attendee analytics', 'Real-time RSVP dashboard', 'Bulk import + group management', 'Dedicated account manager'].map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm">
+                    <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link to="/login">
+                <Button variant="outline" className="w-full">Get Started</Button>
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
       <section className="py-20" style={{ background: 'var(--gradient-hero)' }}>
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">Ready to Elevate Your Events?</h2>
