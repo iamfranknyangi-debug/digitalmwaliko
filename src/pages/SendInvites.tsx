@@ -90,7 +90,7 @@ export default function SendInvites() {
       const selectedContactsData = contacts.filter((c) => selectedContacts.includes(c.id));
       const recipients = selectedContactsData.map((c) => {
         const inv = insertedInvitations?.find((i) => i.contact_id === c.id);
-        return { phone: c.phone, name: c.name, invitation_id: inv?.id || '' };
+        return { contact_id: c.id, invitation_id: inv?.id || '' };
       });
 
       // 3. Send SMS via edge function

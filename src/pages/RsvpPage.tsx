@@ -40,36 +40,40 @@ export default function RsvpPage() {
     if (!invitationId) return;
     const fetchInvitation = async () => {
       setLoading(true);
-      const { data, error: fetchError } = await supabase
-        .from('invitations')
-        .select('id, rsvp_status, attendee_count, event_id, contact_id')
-        .eq('id', invitationId)
-        .single();
 
-      if (fetchError || !data) {
+      const { data, error: fetchError } = await supabase.functions.invoke('rsvp', {
+        method: 'GET',
+        body: undefined,
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      // Use manual fetch since supabase.functions.invoke doesn't support GET with query params well
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const res = await fetch(
+        `https://${projectId}.supabase.co/functions/v1/rsvp?id=${encodeURIComponent(invitationId)}`,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+      if (!res.ok) {
         setError('Invitation not found. Please check your link.');
         setLoading(false);
         return;
       }
 
-      // Fetch event and contact details
-      const [eventRes, contactRes] = await Promise.all([
-        supabase.from('events').select('title, host, venue, date, time, description, image_url, template_id').eq('id', data.event_id).single(),
-        supabase.from('contacts').select('name').eq('id', data.contact_id).single(),
-      ]);
+      const invData = await res.json();
 
-      if (!eventRes.data || !contactRes.data) {
+      if (!invData || !invData.event || !invData.contact) {
         setError('Event details not found.');
         setLoading(false);
         return;
       }
 
       const inv: InvitationData = {
-        id: data.id,
-        rsvp_status: data.rsvp_status,
-        attendee_count: data.attendee_count,
-        event: eventRes.data,
-        contact: contactRes.data,
+        id: invData.id,
+        rsvp_status: invData.rsvp_status,
+        attendee_count: invData.attendee_count,
+        event: invData.event,
+        contact: invData.contact,
       };
 
       setInvitation(inv);
@@ -90,18 +94,23 @@ export default function RsvpPage() {
 
     const count = answer === 'confirmed' ? Math.min(Math.max(parseInt(attendees) || 1, 1), 20) : 0;
 
-    const { error: updateError } = await supabase
-      .from('invitations')
-      .update({
-        rsvp_status: answer,
-        attendee_count: count,
-        responded_at: new Date().toISOString(),
-      })
-      .eq('id', invitation.id);
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    const res = await fetch(
+      `https://${projectId}.supabase.co/functions/v1/rsvp`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          invitation_id: invitation.id,
+          rsvp_status: answer,
+          attendee_count: count,
+        }),
+      }
+    );
 
     setSubmitting(false);
 
-    if (updateError) {
+    if (!res.ok) {
       toast.error('Failed to submit response. Please try again.');
       return;
     }
