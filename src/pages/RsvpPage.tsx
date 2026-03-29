@@ -41,13 +41,6 @@ export default function RsvpPage() {
     const fetchInvitation = async () => {
       setLoading(true);
 
-      const { data, error: fetchError } = await supabase.functions.invoke('rsvp', {
-        method: 'GET',
-        body: undefined,
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      // Use manual fetch since supabase.functions.invoke doesn't support GET with query params well
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const res = await fetch(
         `https://${projectId}.supabase.co/functions/v1/rsvp?id=${encodeURIComponent(invitationId)}`,
