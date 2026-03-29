@@ -7,6 +7,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const MAX_RECIPIENTS = 500;
+const MAX_MESSAGE_LENGTH = 1600;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -38,23 +41,73 @@ serve(async (req) => {
 
     const { recipients, message } = await req.json();
 
-    if (!Array.isArray(recipients) || recipients.length === 0) {
-      throw new Error("recipients must be a non-empty array");
-    }
+    // Validate message
     if (typeof message !== "string" || message.trim().length === 0) {
       throw new Error("message must be a non-empty string");
     }
+    if (message.length > MAX_MESSAGE_LENGTH) {
+      throw new Error(`message must be at most ${MAX_MESSAGE_LENGTH} characters`);
+    }
 
-    // Send SMS to each recipient via Sprint API
+    // Validate recipients array structure
+    if (!Array.isArray(recipients) || recipients.length === 0) {
+      throw new Error("recipients must be a non-empty array");
+    }
+    if (recipients.length > MAX_RECIPIENTS) {
+      throw new Error(`recipients must not exceed ${MAX_RECIPIENTS}`);
+    }
+
+    // Extract contact IDs and validate they are UUIDs
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const contactIds: string[] = [];
+    const invitationIds: string[] = [];
+    for (const r of recipients) {
+      if (!r.contact_id || !uuidRegex.test(r.contact_id)) {
+        throw new Error("Each recipient must have a valid contact_id");
+      }
+      contactIds.push(r.contact_id);
+      if (r.invitation_id) invitationIds.push(r.invitation_id);
+    }
+
+    // Server-side validation: fetch contacts that belong to this user
+    const serviceClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const { data: validContacts, error: contactsError } = await serviceClient
+      .from("contacts")
+      .select("id, phone, name")
+      .eq("user_id", user.id)
+      .in("id", contactIds);
+
+    if (contactsError) throw new Error("Failed to validate contacts");
+    if (!validContacts || validContacts.length === 0) {
+      throw new Error("No valid contacts found for your account");
+    }
+
+    // Build a map of valid contacts
+    const contactMap = new Map(validContacts.map((c) => [c.id, c]));
+
+    // Build validated recipients from DB data, not client input
+    const validatedRecipients = recipients
+      .filter((r: { contact_id: string; invitation_id?: string }) => contactMap.has(r.contact_id))
+      .map((r: { contact_id: string; invitation_id?: string }) => {
+        const contact = contactMap.get(r.contact_id)!;
+        return {
+          phone: contact.phone,
+          name: contact.name,
+          invitation_id: r.invitation_id || "",
+        };
+      });
+
+    if (validatedRecipients.length === 0) {
+      throw new Error("No valid contacts matched your account");
+    }
+
+    // Send SMS to each validated recipient via Sprint API
     const results = await Promise.allSettled(
-      recipients.map(async (r: { phone: string; name: string; invitation_id: string }) => {
-        // Clean phone number - remove + sign, ensure country code
+      validatedRecipients.map(async (r: { phone: string; name: string; invitation_id: string }) => {
         let phone = r.phone.replace(/[^0-9]/g, "");
-        // If starts with 0, assume Tanzania (+255)
         if (phone.startsWith("0")) {
           phone = "255" + phone.substring(1);
         }
-        // If doesn't start with country code, add 255
         if (!phone.startsWith("255") && phone.length <= 10) {
           phone = "255" + phone;
         }
@@ -96,7 +149,7 @@ serve(async (req) => {
       .map((r) => r.reason?.message || "Unknown error");
 
     return new Response(
-      JSON.stringify({ sent, failed, total: recipients.length, errors }),
+      JSON.stringify({ sent, failed, total: validatedRecipients.length, errors }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
