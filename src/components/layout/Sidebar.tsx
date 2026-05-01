@@ -18,12 +18,14 @@ import {
   Sparkles,
   Shield,
   X,
+  FolderOpen,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: CreditCard, label: 'Card Creator', path: '/cards' },
+  { icon: FolderOpen, label: 'My Cards', path: '/cards?view=saved' },
   { icon: Calendar, label: 'Events', path: '/events' },
   { icon: Users, label: 'Contacts', path: '/contacts' },
   { icon: Send, label: 'Send Invites', path: '/send' },
@@ -94,7 +96,10 @@ export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
       {/* Nav */}
       <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const [itemPath, itemQuery] = item.path.split('?');
+          const isActive =
+            location.pathname === itemPath &&
+            (itemQuery ? location.search.includes(itemQuery) : !location.search.includes('view=saved') || itemPath !== '/cards');
           return (
             <Link
               key={item.path}
