@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -96,6 +97,12 @@ export default function CardCreator() {
   useEffect(() => {
     if (cardsOpen) fetchSavedCards();
   }, [cardsOpen, user]);
+
+  const location = useLocation();
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('view') === 'saved') setCardsOpen(true);
+  }, [location.search]);
 
   const cardCategories = ['all', 'wedding', 'birthday', 'corporate', 'baby-shower', 'graduation', 'other'] as const;
 
