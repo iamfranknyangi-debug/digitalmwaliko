@@ -363,210 +363,346 @@ export function TemplatePreview({
   };
 
   switch (template.thumbnail) {
-    /* ---------- Royal Gold: dark navy + ornate gold corners ---------- */
+    /* ---------- Royal Gold: deep navy + ornate damask ---------- */
     case 'royal-gold':
       return wrap(
-        <>
-          <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <defs>
-              <pattern id="rg" width="8" height="8" patternUnits="userSpaceOnUse">
-                <path d="M0 4 Q4 0 8 4 Q4 8 0 4" fill="none" stroke={accent} strokeWidth="0.3" />
-              </pattern>
-            </defs>
-            <rect width="100" height="100" fill="url(#rg)" />
-          </svg>
-          {/* Gold corner ornaments */}
-          {['top-3 left-3', 'top-3 right-3 rotate-90', 'bottom-3 left-3 -rotate-90', 'bottom-3 right-3 rotate-180'].map(
-            (pos, i) => (
-              <svg key={i} className={`absolute ${pos}`} width={isFull ? 40 : 22} height={isFull ? 40 : 22} viewBox="0 0 40 40">
-                <path d="M2 2 L38 2 M2 2 L2 38 M2 2 Q12 12 22 2 M2 2 Q12 12 2 22" stroke={accent} strokeWidth="1" fill="none" />
-                <circle cx="2" cy="2" r="2" fill={accent} />
+        <OrnatePanel
+          theme={{
+            ink: '#2a2418',
+            panelBg: 'linear-gradient(180deg, #fffaee 0%, #f5ead0 100%)',
+            accentColor: accent,
+            deep: c1,
+            ribbon: 'WEDDING CEREMONY',
+            scriptWord: 'Wedding',
+            tagline: 'THE HONOUR OF YOUR PRESENCE',
+          }}
+          decoration={
+            <>
+              <svg className="absolute inset-0 w-full h-full opacity-25" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <defs>
+                  <pattern id="rg-d" width="10" height="10" patternUnits="userSpaceOnUse">
+                    <path d="M0 5 Q5 0 10 5 Q5 10 0 5" fill="none" stroke={accent} strokeWidth="0.4" />
+                    <circle cx="5" cy="5" r="0.6" fill={accent} />
+                  </pattern>
+                </defs>
+                <rect width="100" height="100" fill="url(#rg-d)" />
               </svg>
-            )
-          )}
-          <div
-            className="absolute inset-4 border"
-            style={{ borderColor: accent, opacity: 0.4 }}
-          />
-          <Content accentColor={accent} invitedLabel="The Honour of Your Presence" />
-        </>,
+              {[
+                'top-2 left-2',
+                'top-2 right-2 rotate-90',
+                'bottom-2 left-2 -rotate-90',
+                'bottom-2 right-2 rotate-180',
+              ].map((pos, i) => (
+                <svg
+                  key={i}
+                  className={`absolute ${pos}`}
+                  width={isFull ? 56 : 28}
+                  height={isFull ? 56 : 28}
+                  viewBox="0 0 56 56"
+                >
+                  <path
+                    d="M4 4 L52 4 M4 4 L4 52 M4 4 Q20 18 30 4 Q34 18 4 24 M10 10 Q24 14 28 22"
+                    stroke={accent}
+                    strokeWidth="1.2"
+                    fill="none"
+                  />
+                  <circle cx="4" cy="4" r="2.5" fill={accent} />
+                  <circle cx="30" cy="4" r="1.2" fill={accent} />
+                  <circle cx="4" cy="30" r="1.2" fill={accent} />
+                </svg>
+              ))}
+            </>
+          }
+        />,
         `linear-gradient(135deg, ${c1} 0%, ${c2} 100%)`
       );
 
-    /* ---------- Emerald Botanical: deep green + leaf motifs ---------- */
+    /* ---------- Emerald Botanical: deep green + tropical leaves ---------- */
     case 'emerald-botanical':
       return wrap(
-        <>
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
-            <g fill={accent} opacity="0.18">
-              <path d="M-10 -10 Q40 30 20 80 Q0 50 -10 80 Z" />
-              <path d="M210 260 Q160 220 180 170 Q200 200 210 170 Z" />
-              <ellipse cx="170" cy="40" rx="25" ry="8" transform="rotate(35 170 40)" />
-              <ellipse cx="30" cy="220" rx="25" ry="8" transform="rotate(-35 30 220)" />
-            </g>
-            <g stroke={accent} strokeWidth="0.5" fill="none" opacity="0.4">
-              <path d="M0 0 Q30 40 15 90" />
-              <path d="M200 250 Q170 210 185 160" />
-            </g>
-          </svg>
-          <Content accentColor={accent} invitedLabel="A Garden Celebration" />
-        </>,
-        `linear-gradient(160deg, ${c1} 0%, ${c2} 100%)`
+        <OrnatePanel
+          theme={{
+            ink: '#1f2a23',
+            panelBg: 'linear-gradient(180deg, #fbf8ef 0%, #f0e9d4 100%)',
+            accentColor: accent,
+            deep: c1,
+            ribbon: 'GARDEN CELEBRATION',
+            scriptWord: 'Together',
+            tagline: 'WE JOYFULLY INVITE YOU',
+          }}
+          decoration={
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
+              <g fill={c1} opacity="0.55">
+                <path d="M-10 -10 Q50 20 30 90 Q5 60 -10 90 Z" />
+                <path d="M210 260 Q150 230 170 160 Q195 190 210 160 Z" />
+              </g>
+              <g fill={accent} opacity="0.7">
+                <ellipse cx="25" cy="20" rx="22" ry="7" transform="rotate(35 25 20)" />
+                <ellipse cx="40" cy="60" rx="18" ry="6" transform="rotate(60 40 60)" />
+                <ellipse cx="175" cy="230" rx="22" ry="7" transform="rotate(-35 175 230)" />
+                <ellipse cx="160" cy="195" rx="18" ry="6" transform="rotate(-60 160 195)" />
+              </g>
+              <g stroke={accent} strokeWidth="0.6" fill="none" opacity="0.6">
+                <path d="M0 0 Q35 50 18 100" />
+                <path d="M200 250 Q165 200 182 150" />
+              </g>
+            </svg>
+          }
+        />,
+        `linear-gradient(160deg, #f5e9c8 0%, #e8d8a8 100%)`
       );
 
-    /* ---------- Blush Minimal: warm cream + thin arch ---------- */
+    /* ---------- Blush Minimal: warm cream + soft arch shadow ---------- */
     case 'blush-minimal':
       return wrap(
-        <>
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
-            <path d="M40 230 Q40 100 100 100 Q160 100 160 230" stroke={accent} strokeWidth="0.8" fill="none" opacity="0.5" />
-            <circle cx="100" cy="60" r="3" fill={accent} opacity="0.6" />
-          </svg>
-          <Content accentColor={accent} invitedLabel="Save the Date" />
-        </>,
-        `linear-gradient(180deg, ${c1} 0%, ${c2} 100%)`,
-        accent
+        <OrnatePanel
+          theme={{
+            ink: '#5a3a2e',
+            panelBg: 'linear-gradient(180deg, #ffffff 0%, #fdf2f0 100%)',
+            accentColor: accent,
+            deep: '#8b4a3a',
+            ribbon: 'SAVE THE DATE',
+            scriptWord: 'Forever',
+            tagline: 'A LOVE STORY BEGINS',
+          }}
+          decoration={
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
+              <circle cx="40" cy="40" r="60" fill="#f5d8cc" opacity="0.5" />
+              <circle cx="170" cy="220" r="55" fill="#eccab8" opacity="0.55" />
+              <g stroke={accent} strokeWidth="0.5" fill="none" opacity="0.4">
+                <path d="M20 200 Q40 180 60 200 Q40 220 20 200 Z" />
+                <path d="M170 50 Q190 30 210 50 Q190 70 170 50 Z" />
+              </g>
+            </svg>
+          }
+        />,
+        '#fdf2f0'
       );
 
-    /* ---------- Confetti Pop: gradient + floating shapes ---------- */
+    /* ---------- Confetti Pop: vibrant gradient birthday ---------- */
     case 'confetti-pop':
       return wrap(
-        <>
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
-            {Array.from({ length: 18 }).map((_, i) => {
-              const x = (i * 37) % 200;
-              const y = (i * 53) % 250;
-              const colors = [accent, '#ffffff', c2];
-              const fill = colors[i % 3];
-              const shape = i % 3;
-              return shape === 0 ? (
-                <circle key={i} cx={x} cy={y} r={3} fill={fill} opacity="0.85" />
-              ) : shape === 1 ? (
-                <rect key={i} x={x} y={y} width="5" height="5" fill={fill} opacity="0.8" transform={`rotate(${i * 20} ${x} ${y})`} />
-              ) : (
-                <path key={i} d={`M${x} ${y} L${x + 4} ${y + 7} L${x - 4} ${y + 7} Z`} fill={fill} opacity="0.75" />
-              );
-            })}
-          </svg>
-          <Content accentColor="#ffffff" invitedLabel="Let's Celebrate" />
-        </>,
+        <OrnatePanel
+          theme={{
+            ink: '#2a1a3a',
+            panelBg: 'linear-gradient(180deg, #ffffff 0%, #fef3ff 100%)',
+            accentColor: accent,
+            deep: c1,
+            ribbon: 'BIRTHDAY BASH',
+            scriptWord: 'Celebrate',
+            tagline: "LET'S MAKE MEMORIES",
+          }}
+          decoration={
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
+              {Array.from({ length: 24 }).map((_, i) => {
+                const x = (i * 41) % 200;
+                const y = (i * 59) % 250;
+                const palette = [accent, c2, '#ffffff', '#fda4af'];
+                const fill = palette[i % 4];
+                const shape = i % 3;
+                return shape === 0 ? (
+                  <circle key={i} cx={x} cy={y} r={3} fill={fill} opacity="0.85" />
+                ) : shape === 1 ? (
+                  <rect
+                    key={i}
+                    x={x}
+                    y={y}
+                    width="5"
+                    height="5"
+                    fill={fill}
+                    opacity="0.8"
+                    transform={`rotate(${i * 20} ${x} ${y})`}
+                  />
+                ) : (
+                  <path key={i} d={`M${x} ${y} L${x + 4} ${y + 7} L${x - 4} ${y + 7} Z`} fill={fill} opacity="0.75" />
+                );
+              })}
+            </svg>
+          }
+        />,
         `linear-gradient(135deg, ${c1} 0%, ${c2} 100%)`
       );
 
-    /* ---------- Midnight Bloom: dark gradient + glowing florals ---------- */
+    /* ---------- Midnight Bloom: dark + glowing botanicals ---------- */
     case 'midnight-bloom':
       return wrap(
-        <>
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              <radialGradient id="mb-glow" cx="50%" cy="0%" r="80%">
-                <stop offset="0%" stopColor={accent} stopOpacity="0.35" />
-                <stop offset="100%" stopColor={accent} stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <rect width="200" height="250" fill="url(#mb-glow)" />
-            <g stroke={accent} fill="none" strokeWidth="0.6" opacity="0.6">
-              <circle cx="30" cy="40" r="14" />
-              <circle cx="30" cy="40" r="7" />
-              <circle cx="170" cy="210" r="18" />
-              <circle cx="170" cy="210" r="9" />
-              <path d="M30 26 L30 54 M16 40 L44 40 M20 30 L40 50 M40 30 L20 50" />
-            </g>
-          </svg>
-          <Content accentColor={accent} invitedLabel="An Evening Affair" />
-        </>,
+        <OrnatePanel
+          theme={{
+            ink: '#f5ecd4',
+            panelBg: 'linear-gradient(180deg, #1a1530 0%, #0c0a1f 100%)',
+            accentColor: accent,
+            deep: c2,
+            ribbon: 'EVENING AFFAIR',
+            scriptWord: 'Enchanted',
+            tagline: 'UNDER THE STARS',
+          }}
+          decoration={
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <radialGradient id="mb-glow2" cx="50%" cy="0%" r="80%">
+                  <stop offset="0%" stopColor={accent} stopOpacity="0.4" />
+                  <stop offset="100%" stopColor={accent} stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <rect width="200" height="250" fill="url(#mb-glow2)" />
+              {Array.from({ length: 30 }).map((_, i) => (
+                <circle
+                  key={i}
+                  cx={(i * 37) % 200}
+                  cy={(i * 61) % 250}
+                  r={0.8}
+                  fill={accent}
+                  opacity={0.6}
+                />
+              ))}
+              <g stroke={accent} fill="none" strokeWidth="0.7" opacity="0.65">
+                <circle cx="25" cy="35" r="14" />
+                <circle cx="25" cy="35" r="7" />
+                <circle cx="175" cy="215" r="16" />
+                <circle cx="175" cy="215" r="8" />
+                <path d="M25 21 L25 49 M11 35 L39 35" />
+                <path d="M175 199 L175 231 M159 215 L191 215" />
+              </g>
+            </svg>
+          }
+        />,
         `linear-gradient(180deg, ${c1} 0%, ${c2} 100%)`
       );
 
-    /* ---------- Executive Navy: corporate, lines + monogram ---------- */
+    /* ---------- Executive Navy: refined corporate ---------- */
     case 'executive-navy':
       return wrap(
-        <>
-          <div className="absolute top-0 left-0 right-0 h-2" style={{ background: accent }} />
-          <div className="absolute bottom-0 left-0 right-0 h-2" style={{ background: accent }} />
-          <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 200 250" preserveAspectRatio="none">
-            <g stroke="#ffffff" strokeWidth="0.3">
-              {Array.from({ length: 25 }).map((_, i) => (
-                <line key={i} x1={i * 8} y1="0" x2={i * 8} y2="250" />
-              ))}
-            </g>
-          </svg>
-          <div
-            className={`absolute ${isFull ? 'top-6 right-6 w-12 h-12' : 'top-3 right-3 w-7 h-7'} border flex items-center justify-center font-bold`}
-            style={{ borderColor: accent, color: accent, fontFamily: "'Playfair Display', serif", fontSize: isFull ? 18 : 11 }}
-          >
-            {(t[0] || 'E').toUpperCase()}
-          </div>
-          <Content accentColor={accent} invitedLabel="Cordially Invited" />
-        </>,
+        <OrnatePanel
+          theme={{
+            ink: '#1a2238',
+            panelBg: 'linear-gradient(180deg, #ffffff 0%, #f4f1e8 100%)',
+            accentColor: accent,
+            deep: c1,
+            ribbon: 'CORPORATE GALA',
+            scriptWord: 'Distinction',
+            tagline: 'CORDIALLY INVITED',
+          }}
+          decoration={
+            <>
+              <div className="absolute top-0 left-0 right-0" style={{ height: isFull ? 6 : 3, background: accent }} />
+              <div className="absolute bottom-0 left-0 right-0" style={{ height: isFull ? 6 : 3, background: accent }} />
+              <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 200 250" preserveAspectRatio="none">
+                <g stroke="#ffffff" strokeWidth="0.3">
+                  {Array.from({ length: 25 }).map((_, i) => (
+                    <line key={i} x1={i * 8} y1="0" x2={i * 8} y2="250" />
+                  ))}
+                </g>
+              </svg>
+            </>
+          }
+        />,
         `linear-gradient(180deg, ${c1} 0%, ${c2} 100%)`
       );
 
-    /* ---------- Modern Mono: light, swiss, geometric ---------- */
+    /* ---------- Modern Mono: swiss editorial ---------- */
     case 'modern-mono':
       return wrap(
-        <>
-          <div className="absolute top-0 left-0 w-1/2 h-1" style={{ background: c2 }} />
-          <div className="absolute bottom-0 right-0 w-1/2 h-1" style={{ background: c2 }} />
-          <div
-            className={`absolute ${isFull ? 'top-6 left-6' : 'top-3 left-3'} font-mono uppercase tracking-widest`}
-            style={{ fontSize: isFull ? 9 : 6, color: accent }}
-          >
-            № 001 — Invitation
-          </div>
-          <div
-            className={`absolute ${isFull ? 'bottom-6 right-6' : 'bottom-3 right-3'} font-mono`}
-            style={{ fontSize: isFull ? 9 : 6, color: accent }}
-          >
-            {date ? fmtDate(date) : '—'}
-          </div>
-          <Content accentColor={accent} invitedLabel="You're Invited" />
-        </>,
+        <OrnatePanel
+          theme={{
+            ink: c2,
+            panelBg: '#ffffff',
+            accentColor: '#171717',
+            deep: '#171717',
+            tagColor: '#171717',
+            ribbon: 'EVENT INVITATION',
+            scriptWord: 'Gathering',
+            tagline: '№ 001 — INVITATION',
+          }}
+          decoration={
+            <>
+              <div className="absolute top-0 left-0 w-1/2" style={{ height: isFull ? 4 : 2, background: c2 }} />
+              <div className="absolute bottom-0 right-0 w-1/2" style={{ height: isFull ? 4 : 2, background: c2 }} />
+              <svg className="absolute inset-0 w-full h-full opacity-[0.04]" viewBox="0 0 200 250" preserveAspectRatio="none">
+                {Array.from({ length: 50 }).map((_, i) => (
+                  <line key={i} x1="0" y1={i * 5} x2="200" y2={i * 5} stroke="#171717" strokeWidth="0.2" />
+                ))}
+              </svg>
+            </>
+          }
+        />,
         c1,
         c2
       );
 
-    /* ---------- Pastel Cloud: soft pink/blue gradient + dots ---------- */
+    /* ---------- Pastel Cloud: baby shower ---------- */
     case 'pastel-cloud':
       return wrap(
-        <>
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
-            <circle cx="20" cy="30" r="35" fill={c2} opacity="0.5" />
-            <circle cx="180" cy="220" r="45" fill={accent} opacity="0.35" />
-            <circle cx="160" cy="50" r="18" fill={accent} opacity="0.25" />
-            {Array.from({ length: 8 }).map((_, i) => (
-              <circle key={i} cx={20 + i * 22} cy={130 + (i % 2) * 8} r="1.5" fill={accent} opacity="0.6" />
-            ))}
-          </svg>
-          <Content accentColor="#8b4a6f" invitedLabel="Welcoming Baby" />
-        </>,
+        <OrnatePanel
+          theme={{
+            ink: '#5b3a4f',
+            panelBg: 'linear-gradient(180deg, #ffffff 0%, #fef3f7 100%)',
+            accentColor: '#c97aa3',
+            deep: '#8b4a6f',
+            ribbon: 'BABY SHOWER',
+            scriptWord: 'Little One',
+            tagline: 'WELCOMING BABY',
+          }}
+          decoration={
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice">
+              <circle cx="20" cy="30" r="50" fill={c2} opacity="0.45" />
+              <circle cx="180" cy="225" r="55" fill={accent} opacity="0.35" />
+              <circle cx="165" cy="55" r="20" fill={accent} opacity="0.25" />
+              <circle cx="35" cy="200" r="22" fill={c2} opacity="0.3" />
+              {Array.from({ length: 12 }).map((_, i) => (
+                <circle key={i} cx={(i * 31) % 200} cy={(i * 47) % 250} r="1.5" fill={accent} opacity="0.5" />
+              ))}
+            </svg>
+          }
+        />,
         `linear-gradient(180deg, ${c1} 0%, #ffffff 100%)`,
         '#5b3a4f'
       );
 
-    /* ---------- Scholar Crest: graduation, crest + ribbon ---------- */
+    /* ---------- Scholar Crest: graduation ---------- */
     case 'scholar-crest':
       return wrap(
-        <>
-          <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 200 250" preserveAspectRatio="none">
-            <defs>
-              <pattern id="sc-stripe" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                <line x1="0" y1="0" x2="0" y2="6" stroke={accent} strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="200" height="250" fill="url(#sc-stripe)" />
-          </svg>
-          <svg
-            className={`absolute left-1/2 -translate-x-1/2 ${isFull ? 'top-6' : 'top-2'}`}
-            width={isFull ? 60 : 30}
-            height={isFull ? 70 : 35}
-            viewBox="0 0 60 70"
-          >
-            <path d="M30 2 L58 14 L52 50 Q30 66 8 50 L2 14 Z" stroke={accent} strokeWidth="1.5" fill={c2} fillOpacity="0.6" />
-            <path d="M30 18 L36 30 L48 30 L38 38 L42 50 L30 42 L18 50 L22 38 L12 30 L24 30 Z" fill={accent} />
-          </svg>
-          <Content accentColor={accent} invitedLabel="Class of 2026" />
-        </>,
+        <OrnatePanel
+          theme={{
+            ink: '#2a1a1f',
+            panelBg: 'linear-gradient(180deg, #fffaee 0%, #f5ead0 100%)',
+            accentColor: accent,
+            deep: c2,
+            ribbon: 'CLASS OF 2026',
+            scriptWord: 'Graduation',
+            tagline: 'A SCHOLARLY MILESTONE',
+          }}
+          decoration={
+            <>
+              <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 200 250" preserveAspectRatio="none">
+                <defs>
+                  <pattern id="sc-stripe2" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                    <line x1="0" y1="0" x2="0" y2="8" stroke={accent} strokeWidth="0.6" />
+                  </pattern>
+                </defs>
+                <rect width="200" height="250" fill="url(#sc-stripe2)" />
+              </svg>
+              <svg
+                className={`absolute left-1/2 -translate-x-1/2`}
+                style={{ top: isFull ? -8 : -4 }}
+                width={isFull ? 70 : 36}
+                height={isFull ? 80 : 40}
+                viewBox="0 0 60 70"
+              >
+                <path
+                  d="M30 2 L58 14 L52 50 Q30 66 8 50 L2 14 Z"
+                  stroke={accent}
+                  strokeWidth="1.5"
+                  fill={c2}
+                  fillOpacity="0.85"
+                />
+                <path
+                  d="M30 18 L36 30 L48 30 L38 38 L42 50 L30 42 L18 50 L22 38 L12 30 L24 30 Z"
+                  fill={accent}
+                />
+              </svg>
+            </>
+          }
+        />,
         `linear-gradient(180deg, ${c1} 0%, ${c2} 100%)`
       );
 
