@@ -371,7 +371,7 @@ function EventsContent({
             </Card>
           ) : (
             <>
-              <div className={view === 'grid' ? 'grid md:grid-cols-2 lg:grid-cols-3 gap-6' : 'flex flex-col gap-3'}>
+              <div className={view === 'grid' ? 'grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3' : 'flex flex-col gap-3'}>
                 {paged.map((event, i) => {
                   const confirmRate = event.totalInvited > 0 ? Math.round((event.confirmed / event.totalInvited) * 100) : 0;
                   const eventDate = new Date(event.date); eventDate.setHours(0, 0, 0, 0);
@@ -443,19 +443,32 @@ function EventsContent({
                   }
 
                   return (
-                    <motion.div key={event.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
-                      <Card className="overflow-hidden hover:shadow-lg transition-shadow group">
-                        <div className="h-32 bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center relative">
-                          <h3 className="font-display text-xl font-bold text-primary-foreground text-center px-4 drop-shadow">{event.title}</h3>
-                          <div className="absolute top-2 left-2">{statusBadge}</div>
-                          <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button size="icon" variant="ghost" className="h-8 w-8 bg-background/20 hover:bg-background/40 text-primary-foreground" onClick={() => openEdit(event)}>
-                              <Pencil className="w-4 h-4" />
+                    <motion.div key={event.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
+                      <Card className="hover:shadow-md hover:border-primary/40 transition-all group">
+                        <div className="flex items-center gap-3 p-3">
+                          {/* Preview thumbnail */}
+                          <div className="flex items-center justify-center w-14 h-14 rounded-md bg-gradient-to-br from-primary/80 to-primary text-primary-foreground flex-shrink-0 shadow-sm">
+                            <div className="text-center leading-tight">
+                              <p className="text-[10px] uppercase tracking-wide opacity-90">{eventDate.toLocaleString('en-GB', { month: 'short' })}</p>
+                              <p className="text-lg font-bold leading-none">{eventDate.getDate()}</p>
+                            </div>
+                          </div>
+
+                          {/* Name + status */}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-display text-sm font-semibold truncate" title={event.title}>{event.title}</h3>
+                            <div className="mt-0.5">{statusBadge}</div>
+                          </div>
+
+                          {/* Hover actions */}
+                          <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => openEdit(event)} aria-label="Edit">
+                              <Pencil className="w-3.5 h-3.5" />
                             </Button>
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                <Button size="icon" variant="ghost" className="h-8 w-8 bg-background/20 hover:bg-destructive/80 text-primary-foreground">
-                                  <Trash2 className="w-4 h-4" />
+                                <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" aria-label="Delete">
+                                  <Trash2 className="w-3.5 h-3.5" />
                                 </Button>
                               </AlertDialogTrigger>
                               <AlertDialogContent>
@@ -471,39 +484,6 @@ function EventsContent({
                             </AlertDialog>
                           </div>
                         </div>
-                        <CardContent className="p-5 space-y-4">
-                          <div className="space-y-2 text-sm text-muted-foreground">
-                            <p className="flex items-center gap-2"><Calendar className="w-4 h-4" /> {new Date(event.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                            <p className="flex items-center gap-2"><Clock className="w-4 h-4" /> {event.time}</p>
-                            <p className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {event.venue || 'No venue set'}</p>
-                          </div>
-
-                          {event.totalInvited > 0 && (
-                            <>
-                              <div>
-                                <div className="flex items-center justify-between text-sm mb-1">
-                                  <span className="text-muted-foreground">RSVP Progress</span>
-                                  <span className="font-semibold text-foreground">{confirmRate}%</span>
-                                </div>
-                                <Progress value={confirmRate} className="h-2" />
-                              </div>
-                              <div className="flex justify-between text-center">
-                                <div>
-                                  <p className="text-lg font-bold text-foreground">{event.totalInvited}</p>
-                                  <p className="text-xs text-muted-foreground">Invited</p>
-                                </div>
-                                <div>
-                                  <p className="text-lg font-bold text-success">{event.confirmed}</p>
-                                  <p className="text-xs text-success">Confirmed</p>
-                                </div>
-                                <div>
-                                  <p className="text-lg font-bold text-warning">{event.pending}</p>
-                                  <p className="text-xs text-warning">Pending</p>
-                                </div>
-                              </div>
-                            </>
-                          )}
-                        </CardContent>
                       </Card>
                     </motion.div>
                   );
