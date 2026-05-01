@@ -248,19 +248,19 @@ export default function CardCreator() {
                     onClick={() => setSelectedTemplate(template)}
                   >
                     <CardContent className="p-4">
-                      <div
-                        className="w-full h-40 rounded-lg mb-3 flex items-center justify-center"
-                        style={{
-                          background: `linear-gradient(135deg, ${template.colors[0]}, ${template.colors[1]})`,
-                        }}
-                      >
-                        <div className="text-center text-white">
-                          <p className="font-display text-xl font-bold drop-shadow-md">{template.name}</p>
-                          <p className="text-xs opacity-80 mt-1 capitalize">{template.category.replace('-', ' ')}</p>
-                        </div>
+                      <div className="mb-3">
+                        <TemplatePreview
+                          template={template}
+                          title={template.name}
+                          host={template.category === 'wedding' ? '& Family' : ''}
+                          variant="thumb"
+                        />
                       </div>
                       <div className="flex items-center justify-between">
-                        <p className="font-medium text-sm">{template.name}</p>
+                        <div>
+                          <p className="font-medium text-sm">{template.name}</p>
+                          <p className="text-xs text-muted-foreground capitalize">{template.category.replace('-', ' ')}</p>
+                        </div>
                         <div className="flex gap-1">
                           {template.colors.map((c, i) => (
                             <div key={i} className="w-4 h-4 rounded-full border border-border" style={{ backgroundColor: c }} />
