@@ -360,32 +360,25 @@ export default function CardCreator() {
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40" />
                   </div>
                 )}
-                <div
-                  className="p-8 text-center text-white min-h-[350px] flex flex-col items-center justify-center"
-                  style={{
-                    background: selectedTemplate
-                      ? `linear-gradient(135deg, ${selectedTemplate.colors[0]}, ${selectedTemplate.colors[1]})`
-                      : 'var(--gradient-primary)',
-                  }}
-                >
-                  <p className="text-xs uppercase tracking-[0.3em] opacity-70 mb-6">You are cordially invited</p>
-                  <h2 className="font-display text-3xl md:text-4xl font-bold mb-2 drop-shadow-md">
-                    {eventTitle || 'Your Event Title'}
-                  </h2>
-                  <p className="text-sm opacity-80 mb-6">Hosted by {hostName || 'Host Name'}</p>
-                  <div className="w-16 h-px bg-white/40 mb-6" />
-                  <div className="space-y-2 text-sm">
-                    <p className="flex items-center justify-center gap-2"><MapPin className="w-4 h-4" /> {venue || 'Venue'}</p>
-                    <p className="flex items-center justify-center gap-2"><Calendar className="w-4 h-4" /> {date ? new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Date'}</p>
-                    <p className="flex items-center justify-center gap-2"><Clock className="w-4 h-4" /> {time || 'Time'}</p>
+                {selectedTemplate ? (
+                  <TemplatePreview
+                    template={selectedTemplate}
+                    title={eventTitle || 'Your Event Title'}
+                    host={hostName || 'Host Name'}
+                    venue={venue || 'Venue'}
+                    date={date}
+                    time={time || 'Time'}
+                    description={description}
+                    variant="full"
+                  />
+                ) : (
+                  <div className="p-8 text-center text-muted-foreground min-h-[350px] flex items-center justify-center">
+                    Select a template to preview
                   </div>
-                  {description && (
-                    <p className="mt-6 text-sm opacity-90 max-w-sm italic">"{description}"</p>
-                  )}
-                  {selectedTemplate && (
-                    <p className="mt-4 text-xs opacity-50">Template: {selectedTemplate.name}</p>
-                  )}
-                </div>
+                )}
+                {selectedTemplate && (
+                  <p className="text-center text-xs text-muted-foreground mt-3">Template: {selectedTemplate.name}</p>
+                )}
               </Card>
 
               <div className="flex gap-3 mt-6 justify-center">
