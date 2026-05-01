@@ -8,9 +8,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from '@/components/ui/sheet';
 import { mockTemplates } from '@/lib/mock-data';
 import { CardTemplate } from '@/lib/types';
-import { Calendar, MapPin, Clock, User, Type, Eye, Loader2, Upload, ImageIcon, Save } from 'lucide-react';
+import { Calendar, MapPin, Clock, User, Type, Eye, Loader2, Upload, ImageIcon, Save, LayoutGrid, Search, FolderOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -20,6 +21,19 @@ import { TemplatePreview } from '@/components/cards/TemplatePreview';
 interface EventOption {
   id: string;
   title: string;
+}
+
+interface SavedCard {
+  id: string;
+  title: string;
+  host: string;
+  venue: string;
+  date: string;
+  time: string;
+  description: string | null;
+  image_url: string | null;
+  template_id: string | null;
+  updated_at: string;
 }
 
 export default function CardCreator() {
@@ -43,6 +57,13 @@ export default function CardCreator() {
   const [events, setEvents] = useState<EventOption[]>([]);
   const [selectedEventId, setSelectedEventId] = useState<string>('new');
 
+  // Saved cards side panel
+  const [savedCards, setSavedCards] = useState<SavedCard[]>([]);
+  const [cardsOpen, setCardsOpen] = useState(false);
+  const [cardSearch, setCardSearch] = useState('');
+  const [cardFilter, setCardFilter] = useState<string>('all');
+  const [loadingCards, setLoadingCards] = useState(false);
+
   const categories = ['all', 'wedding', 'birthday', 'corporate', 'baby-shower', 'graduation'] as const;
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
@@ -59,6 +80,42 @@ export default function CardCreator() {
       .order('created_at', { ascending: false })
       .then(({ data }) => setEvents(data || []));
   }, [user]);
+
+  const fetchSavedCards = async () => {
+    if (!user) return;
+    setLoadingCards(true);
+    const { data } = await supabase
+      .from('events')
+      .select('id, title, host, venue, date, time, description, image_url, template_id, updated_at')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false });
+    setSavedCards((data as SavedCard[]) || []);
+    setLoadingCards(false);
+  };
+
+  useEffect(() => {
+    if (cardsOpen) fetchSavedCards();
+  }, [cardsOpen, user]);
+
+  const cardCategories = ['all', 'wedding', 'birthday', 'corporate', 'baby-shower', 'graduation', 'other'] as const;
+
+  const filteredSavedCards = savedCards.filter((c) => {
+    const tmpl = mockTemplates.find((t) => t.id === c.template_id);
+    const cat = tmpl?.category || 'other';
+    const matchesCat = cardFilter === 'all' || cat === cardFilter;
+    const q = cardSearch.trim().toLowerCase();
+    const matchesSearch = !q ||
+      c.title.toLowerCase().includes(q) ||
+      (c.host || '').toLowerCase().includes(q) ||
+      (c.venue || '').toLowerCase().includes(q);
+    return matchesCat && matchesSearch;
+  });
+
+  const openSavedCard = async (id: string) => {
+    await handleEventSelect(id);
+    setCardsOpen(false);
+    setActiveTab('preview');
+  };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -205,6 +262,105 @@ export default function CardCreator() {
             <p className="text-muted-foreground mt-1">Design beautiful invitation cards for your events.</p>
           </div>
           <div className="flex items-center gap-3">
+            <Sheet open={cardsOpen} onOpenChange={setCardsOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <LayoutGrid className="w-4 h-4" /> My Cards
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:max-w-md flex flex-col p-0">
+                <SheetHeader className="p-5 border-b border-border">
+                  <SheetTitle className="font-display flex items-center gap-2">
+                    <FolderOpen className="w-5 h-5 text-primary" /> My Cards
+                  </SheetTitle>
+                  <SheetDescription>Browse and reopen any card you've created.</SheetDescription>
+                </SheetHeader>
+
+                <div className="p-4 space-y-3 border-b border-border">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search by title, host, venue..."
+                      value={cardSearch}
+                      onChange={(e) => setCardSearch(e.target.value)}
+                      className="pl-9"
+                    />
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {cardCategories.map((cat) => (
+                      <Badge
+                        key={cat}
+                        variant={cardFilter === cat ? 'default' : 'secondary'}
+                        className="cursor-pointer capitalize text-xs"
+                        onClick={() => setCardFilter(cat)}
+                      >
+                        {cat === 'all' ? 'All' : cat.replace('-', ' ')}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                  {loadingCards ? (
+                    <div className="flex justify-center py-10">
+                      <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                    </div>
+                  ) : filteredSavedCards.length === 0 ? (
+                    <div className="text-center text-muted-foreground py-10 text-sm">
+                      No cards match your filters.
+                    </div>
+                  ) : (
+                    filteredSavedCards.map((c) => {
+                      const tmpl = mockTemplates.find((t) => t.id === c.template_id);
+                      const cat = tmpl?.category || 'other';
+                      return (
+                        <button
+                          key={c.id}
+                          onClick={() => openSavedCard(c.id)}
+                          className="w-full text-left rounded-lg border border-border hover:border-primary hover:shadow-md transition-all overflow-hidden bg-card group"
+                        >
+                          <div className="flex gap-3 p-3">
+                            <div className="w-20 h-20 rounded-md overflow-hidden shrink-0 border border-border">
+                              {tmpl ? (
+                                <TemplatePreview
+                                  template={tmpl}
+                                  title={c.title}
+                                  host={c.host}
+                                  variant="thumb"
+                                />
+                              ) : c.image_url ? (
+                                <img src={c.image_url} alt={c.title} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full bg-muted flex items-center justify-center">
+                                  <ImageIcon className="w-6 h-6 text-muted-foreground" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
+                                {c.title}
+                              </p>
+                              <p className="text-xs text-muted-foreground truncate mt-0.5">
+                                {c.host || 'No host'}
+                              </p>
+                              <div className="flex items-center gap-1.5 mt-1.5">
+                                <Badge variant="outline" className="text-[10px] capitalize px-1.5 py-0">
+                                  {cat.replace('-', ' ')}
+                                </Badge>
+                                <span className="text-[10px] text-muted-foreground">
+                                  {c.date ? new Date(c.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+
             <Select value={selectedEventId} onValueChange={handleEventSelect}>
               <SelectTrigger className="w-[220px]">
                 <SelectValue placeholder="Link to event" />
