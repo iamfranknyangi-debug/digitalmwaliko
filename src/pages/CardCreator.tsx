@@ -268,7 +268,7 @@ export default function CardCreator() {
                   <LayoutGrid className="w-4 h-4" /> My Cards
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-full sm:max-w-md flex flex-col p-0">
+              <SheetContent side="left" className="w-full sm:max-w-md flex flex-col p-0">
                 <SheetHeader className="p-5 border-b border-border">
                   <SheetTitle className="font-display flex items-center gap-2">
                     <FolderOpen className="w-5 h-5 text-primary" /> My Cards
