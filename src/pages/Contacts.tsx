@@ -97,26 +97,64 @@ export default function Contacts() {
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
+      transformHeader: (h) => h.trim().toLowerCase(),
       complete: async (results) => {
-        const rows = results.data
-          .filter((row: any) => row.name && row.phone)
-          .map((row: any) => ({
-            name: String(row.name).trim().slice(0, 100),
-            phone: String(row.phone).trim(),
+        const normalizePhone = (raw: string) => {
+          let p = String(raw).replace(/[\s\-()]/g, '').trim();
+          if (!p) return '';
+          if (p.startsWith('+')) return p;
+          if (p.startsWith('255')) return '+' + p;
+          if (p.startsWith('0') && p.length === 10) return '+255' + p.slice(1);
+          if (/^\d{9}$/.test(p)) return '+255' + p;
+          return p;
+        };
+
+        const data = results.data as any[];
+        const rows: any[] = [];
+        const skipped: string[] = [];
+
+        data.forEach((row, idx) => {
+          const name = row.name || row.Name || row.fullname || row['full name'];
+          const phoneRaw = row.phone || row.Phone || row.mobile || row.number || row['phone number'];
+          if (!name || !phoneRaw) {
+            skipped.push(`Row ${idx + 2}: missing name or phone`);
+            return;
+          }
+          const phone = normalizePhone(phoneRaw);
+          if (!validateTzPhone(phone)) {
+            skipped.push(`Row ${idx + 2}: invalid phone "${phoneRaw}"`);
+            return;
+          }
+          rows.push({
+            name: String(name).trim().slice(0, 100),
+            phone,
             email: row.email ? String(row.email).trim() : null,
             group: row.group ? String(row.group).trim() : 'Imported',
             user_id: user.id,
-          }));
+          });
+        });
 
-        if (rows.length === 0) return toast.error('No valid contacts found in CSV');
+        if (rows.length === 0) {
+          console.warn('CSV import skipped rows:', skipped, 'parsed headers:', results.meta.fields);
+          return toast.error(
+            `No valid contacts found. Headers detected: ${results.meta.fields?.join(', ') || 'none'}. Required: name, phone (TZ format).`
+          );
+        }
 
         setSaving(true);
         const { error } = await supabase.from('contacts').insert(rows);
         setSaving(false);
 
         if (error) return toast.error('Failed to import contacts');
-        toast.success(`${rows.length} contacts imported!`);
+        toast.success(
+          skipped.length
+            ? `${rows.length} imported, ${skipped.length} skipped (invalid phone/missing fields)`
+            : `${rows.length} contacts imported!`
+        );
         fetchContacts();
+      },
+      error: (err) => {
+        toast.error(`CSV parse error: ${err.message}`);
       },
     });
   };
