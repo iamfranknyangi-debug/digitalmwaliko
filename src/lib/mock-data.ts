@@ -73,6 +73,7 @@ export const mockTemplates: CardTemplate[] = [
   { id: '7', name: 'Modern Mono', category: 'corporate', thumbnail: 'modern-mono', colors: ['#fafafa', '#171717', '#737373'], font: 'Inter' },
   { id: '8', name: 'Pastel Cloud', category: 'baby-shower', thumbnail: 'pastel-cloud', colors: ['#fef3f7', '#fbcfe8', '#7dd3fc'], font: 'Playfair Display' },
   { id: '9', name: 'Scholar Crest', category: 'graduation', thumbnail: 'scholar-crest', colors: ['#1a1a2e', '#7a1f2b', '#d4a574'], font: 'Playfair Display' },
+  { id: '10', name: 'Ivory Arch Send-Off', category: 'wedding', thumbnail: 'ivory-arch', colors: ['#f7efe4', '#fbf6ec', '#c9a24a'], font: 'Playfair Display' },
 ];
 
 export const chartData = {

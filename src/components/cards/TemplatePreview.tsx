@@ -330,6 +330,276 @@ export function TemplatePreview({
         `linear-gradient(180deg, ${c1} 0%, ${c2} 100%)`
       );
 
+    /* ---------- Ivory Arch Send-Off: ornate cream + gold + dark green ---------- */
+    case 'ivory-arch': {
+      const deepGreen = '#0f3d2e';
+      const script = "'Great Vibes', cursive";
+      const serif = "'Playfair Display', serif";
+      const sans = "'Inter', sans-serif";
+      const ink = '#2a2a1f';
+      // Botanical cluster - reused in 4 corners
+      const Botanical = ({ flip = false, vflip = false }: { flip?: boolean; vflip?: boolean }) => (
+        <svg
+          viewBox="0 0 100 100"
+          className="absolute"
+          style={{
+            width: isFull ? 140 : 70,
+            height: isFull ? 140 : 70,
+            transform: `scale(${flip ? -1 : 1}, ${vflip ? -1 : 1})`,
+          }}
+        >
+          <defs>
+            <radialGradient id={`rose-${flip}-${vflip}`} cx="40%" cy="40%" r="60%">
+              <stop offset="0%" stopColor="#fffdf7" />
+              <stop offset="60%" stopColor="#f5e8d0" />
+              <stop offset="100%" stopColor="#d9b885" />
+            </radialGradient>
+          </defs>
+          {/* Trailing leaves */}
+          <g fill={accent} opacity="0.85">
+            <path d="M5 5 Q20 18 12 38 Q4 22 5 5 Z" />
+            <path d="M2 30 Q18 38 16 60 Q6 48 2 30 Z" opacity="0.7" />
+            <path d="M8 55 Q22 62 22 82 Q10 70 8 55 Z" opacity="0.6" />
+            <path d="M30 2 Q42 14 36 32 Q26 20 30 2 Z" opacity="0.7" />
+          </g>
+          <g stroke={accent} strokeWidth="0.6" fill="none" opacity="0.7">
+            <path d="M0 0 Q25 35 18 75" />
+            <path d="M15 8 Q30 25 28 50" />
+          </g>
+          {/* Rose */}
+          <circle cx="22" cy="22" r="16" fill={`url(#rose-${flip}-${vflip})`} stroke="#c9a24a" strokeWidth="0.4" />
+          <circle cx="22" cy="22" r="10" fill="#fdf6e8" opacity="0.7" />
+          <circle cx="22" cy="22" r="5" fill="#e8d4a8" opacity="0.6" />
+          <path
+            d="M22 14 Q28 18 28 22 Q28 26 22 30 Q16 26 16 22 Q16 18 22 14 Z"
+            fill="#fffdf7"
+            opacity="0.5"
+          />
+        </svg>
+      );
+
+      return wrap(
+        <>
+          {/* Cream marble bg */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse at 30% 20%, #fbf6ec 0%, #f3e9d6 60%, #e8d9bc 100%)`,
+            }}
+          />
+          {/* Subtle sparkle dots */}
+          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 250" preserveAspectRatio="none">
+            {Array.from({ length: 14 }).map((_, i) => (
+              <circle
+                key={i}
+                cx={(i * 47) % 200}
+                cy={(i * 71) % 250}
+                r={0.8}
+                fill="#e8c98a"
+                opacity="0.5"
+              />
+            ))}
+          </svg>
+
+          {/* Corner botanicals */}
+          <div className="absolute top-0 left-0"><Botanical /></div>
+          <div className="absolute top-0 right-0"><Botanical flip /></div>
+          <div className="absolute bottom-0 left-0"><Botanical vflip /></div>
+          <div className="absolute bottom-0 right-0"><Botanical flip vflip /></div>
+
+          {/* Arched ivory panel */}
+          <div
+            className="absolute"
+            style={{
+              left: '12%',
+              right: '12%',
+              top: '8%',
+              bottom: isFull ? '14%' : '16%',
+              background: 'linear-gradient(180deg, #fffdf7 0%, #fbf3e3 100%)',
+              borderTopLeftRadius: '50% 25%',
+              borderTopRightRadius: '50% 25%',
+              boxShadow: 'inset 0 0 0 1px rgba(201,162,74,0.45), 0 6px 20px rgba(120,80,20,0.12)',
+            }}
+          />
+          <div
+            className="absolute"
+            style={{
+              left: 'calc(12% + 6px)',
+              right: 'calc(12% + 6px)',
+              top: 'calc(8% + 6px)',
+              bottom: `calc(${isFull ? '14%' : '16%'} + 6px)`,
+              border: `1px solid ${accent}`,
+              borderTopLeftRadius: '50% 25%',
+              borderTopRightRadius: '50% 25%',
+              opacity: 0.5,
+            }}
+          />
+
+          {/* Panel content */}
+          <div
+            className="absolute flex flex-col items-center text-center"
+            style={{
+              left: '16%',
+              right: '16%',
+              top: isFull ? '11%' : '11%',
+              bottom: isFull ? '18%' : '20%',
+              color: ink,
+              justifyContent: 'space-between',
+              padding: isFull ? '8px 0' : '4px 0',
+            }}
+          >
+            {/* Top flourish */}
+            <div className="flex flex-col items-center" style={{ width: '100%' }}>
+              <svg width={isFull ? 60 : 30} height={isFull ? 14 : 8} viewBox="0 0 60 14">
+                <path d="M2 7 Q15 2 30 7 Q45 12 58 7" stroke={accent} strokeWidth="0.8" fill="none" />
+                <path d="M30 4 L33 7 L30 10 L27 7 Z" fill={accent} />
+              </svg>
+              <p
+                style={{
+                  fontFamily: serif,
+                  fontWeight: 700,
+                  fontSize: isFull ? 13 : 7,
+                  letterSpacing: isFull ? 2 : 1,
+                  marginTop: isFull ? 8 : 4,
+                  color: ink,
+                }}
+              >
+                MNAKARIBISHWA KWENYE
+              </p>
+              <p
+                style={{
+                  fontFamily: script,
+                  fontSize: isFull ? 56 : 28,
+                  lineHeight: 1,
+                  color: accent,
+                  marginTop: isFull ? 4 : 2,
+                  textShadow: '0 1px 0 rgba(255,240,200,0.8)',
+                }}
+              >
+                Send-Off
+              </p>
+              {/* Green ribbon badge */}
+              <div
+                className="flex items-center justify-center"
+                style={{
+                  background: deepGreen,
+                  color: '#fff',
+                  fontFamily: serif,
+                  fontWeight: 600,
+                  fontSize: isFull ? 11 : 6,
+                  letterSpacing: isFull ? 2 : 1,
+                  padding: isFull ? '6px 22px' : '3px 11px',
+                  marginTop: isFull ? 8 : 4,
+                  borderRadius: 2,
+                  border: `1px solid ${accent}`,
+                }}
+              >
+                <span style={{ color: accent, marginRight: 6 }}>•</span>
+                KITCHEN PARTY
+                <span style={{ color: accent, marginLeft: 6 }}>•</span>
+              </div>
+            </div>
+
+            {/* Middle - names */}
+            <div className="flex flex-col items-center" style={{ width: '100%' }}>
+              {isFull && (
+                <p style={{ fontFamily: sans, fontSize: 11, color: ink, opacity: 0.85, lineHeight: 1.4 }}>
+                  Kwa furaha kubwa, tunayo heshima kukualika
+                  <br />
+                  kwenye sherehe ya kumuaga binti yetu mpendwa
+                </p>
+              )}
+              <p
+                style={{
+                  fontFamily: script,
+                  fontSize: isFull ? 44 : 20,
+                  color: deepGreen,
+                  lineHeight: 1,
+                  marginTop: isFull ? 10 : 4,
+                }}
+              >
+                {host || t}
+              </p>
+              <svg width={isFull ? 80 : 36} height={isFull ? 10 : 6} viewBox="0 0 80 10" style={{ marginTop: 4 }}>
+                <line x1="0" y1="5" x2="32" y2="5" stroke={accent} strokeWidth="0.6" />
+                <path d="M40 2 L44 5 L40 8 L36 5 Z" fill={accent} />
+                <line x1="48" y1="5" x2="80" y2="5" stroke={accent} strokeWidth="0.6" />
+              </svg>
+              {isFull && (
+                <p style={{ fontFamily: sans, fontSize: 11, color: ink, opacity: 0.85, marginTop: 8 }}>
+                  anayetarajia kuanza maisha mapya ya ndoa.
+                </p>
+              )}
+            </div>
+
+            {/* Info row */}
+            {isFull ? (
+              <div className="flex items-stretch justify-center gap-3" style={{ width: '100%' }}>
+                {[
+                  { icon: <Calendar className="w-4 h-4" />, label: 'TAREHE', val: date ? fmtDate(date) : 'Jumamosi, 24 Mei 2026' },
+                  { icon: <Clock className="w-4 h-4" />, label: 'MUDA', val: time || 'Saa 1:00 Asubuhi' },
+                  { icon: <MapPin className="w-4 h-4" />, label: 'MAHALI', val: venue || 'Ukumbi wa Neema' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 flex-1 justify-center px-2" style={{ borderLeft: i > 0 ? `1px solid ${accent}55` : 'none' }}>
+                    <div
+                      className="rounded-full flex items-center justify-center shrink-0"
+                      style={{ width: 28, height: 28, border: `1.5px solid ${accent}`, color: deepGreen, background: '#fffdf7' }}
+                    >
+                      {item.icon}
+                    </div>
+                    <div className="text-left">
+                      <p style={{ fontFamily: serif, fontWeight: 700, fontSize: 9, letterSpacing: 1.2, color: ink }}>{item.label}</p>
+                      <p style={{ fontFamily: sans, fontSize: 9, color: ink, opacity: 0.85, lineHeight: 1.2 }}>{item.val}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-1.5" style={{ marginTop: 2 }}>
+                {[Calendar, Clock, MapPin].map((Icon, i) => (
+                  <div key={i} className="rounded-full flex items-center justify-center" style={{ width: 12, height: 12, border: `0.8px solid ${accent}`, color: deepGreen }}>
+                    <Icon style={{ width: 6, height: 6 }} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Bottom dark green pill - contact / RSVP */}
+          <div
+            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-between"
+            style={{
+              bottom: isFull ? '4%' : '5%',
+              width: '74%',
+              background: deepGreen,
+              color: '#fff',
+              padding: isFull ? '10px 22px' : '5px 10px',
+              borderRadius: 999,
+              border: `1px solid ${accent}`,
+              fontFamily: sans,
+              fontSize: isFull ? 9 : 5,
+              boxShadow: '0 4px 12px rgba(15,61,46,0.25)',
+            }}
+          >
+            <div className="text-left">
+              <p style={{ fontFamily: serif, fontWeight: 700, letterSpacing: 1.2, color: accent, fontSize: isFull ? 9 : 5 }}>MAWASILIANO</p>
+              <p style={{ opacity: 0.95 }}>0712 345 678</p>
+            </div>
+            <svg width={isFull ? 40 : 18} height={isFull ? 10 : 5} viewBox="0 0 40 10">
+              <path d="M2 5 Q10 1 20 5 Q30 9 38 5" stroke={accent} fill="none" strokeWidth="0.8" />
+              <path d="M18 3 L20 5 L18 7 M22 3 L20 5 L22 7" stroke={accent} fill="none" strokeWidth="0.6" />
+            </svg>
+            <div className="text-right">
+              <p style={{ fontFamily: serif, fontWeight: 700, letterSpacing: 1.2, color: accent, fontSize: isFull ? 9 : 5 }}>RSVP</p>
+              <p style={{ opacity: 0.95 }}>Kabla ya 20 Mei</p>
+            </div>
+          </div>
+        </>,
+        '#fbf6ec',
+        ink
+      );
+    }
+
     default:
       return wrap(
         <Content accentColor={accent} invitedLabel="You're Invited" />,
