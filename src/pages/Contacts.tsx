@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Search, Trash2, FileSpreadsheet, Loader2 } from 'lucide-react';
+import { Plus, Search, Trash2, FileSpreadsheet, Loader2, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import Papa from 'papaparse';
 import { supabase } from '@/integrations/supabase/client';
@@ -37,6 +37,11 @@ export default function Contacts() {
   const [newEmail, setNewEmail] = useState('');
   const [newGroup, setNewGroup] = useState('Friends');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editContact, setEditContact] = useState<Contact | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editGroup, setEditGroup] = useState('Friends');
 
   const fetchContacts = async () => {
     if (!user) return;
@@ -124,6 +129,38 @@ export default function Contacts() {
       toast.success('Contact removed');
       fetchContacts();
     }
+  };
+
+  const openEdit = (c: Contact) => {
+    setEditContact(c);
+    setEditName(c.name);
+    setEditPhone(c.phone);
+    setEditEmail(c.email || '');
+    setEditGroup(c.group);
+  };
+
+  const handleEditSave = async () => {
+    if (!user || !editContact) return;
+    if (!editName.trim() || !editPhone.trim()) return toast.error('Name and phone are required');
+    if (!validateTzPhone(editPhone)) return toast.error('Invalid TZ phone. Use +255XXXXXXXXX format.');
+
+    setSaving(true);
+    const { error } = await supabase
+      .from('contacts')
+      .update({
+        name: editName.trim(),
+        phone: editPhone.trim(),
+        email: editEmail.trim() || null,
+        group: editGroup,
+      })
+      .eq('id', editContact.id)
+      .eq('user_id', user.id);
+    setSaving(false);
+
+    if (error) return toast.error('Failed to update contact');
+    setEditContact(null);
+    toast.success('Contact updated!');
+    fetchContacts();
   };
 
   return (
@@ -221,7 +258,11 @@ export default function Contacts() {
                       <TableCell className="font-mono text-sm">{c.phone}</TableCell>
                       <TableCell><Badge variant="secondary">{c.group}</Badge></TableCell>
                       <TableCell>
-                        <AlertDialog>
+                        <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="icon" onClick={() => openEdit(c)}>
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant="ghost" size="icon"><Trash2 className="w-4 h-4 text-destructive" /></Button>
                           </AlertDialogTrigger>
@@ -235,7 +276,8 @@ export default function Contacts() {
                               <AlertDialogAction onClick={() => handleDelete(c.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
-                        </AlertDialog>
+                          </AlertDialog>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -251,6 +293,44 @@ export default function Contacts() {
             </CardContent>
           </Card>
         )}
+
+        <Dialog open={!!editContact} onOpenChange={(o) => !o && setEditContact(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="font-display">Edit Contact</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 mt-4">
+              <div className="space-y-2">
+                <Label>Name *</Label>
+                <Input placeholder="Full name" value={editName} onChange={(e) => setEditName(e.target.value)} maxLength={100} />
+              </div>
+              <div className="space-y-2">
+                <Label>Phone Number *</Label>
+                <Input placeholder="+255712345678" value={editPhone} onChange={(e) => setEditPhone(e.target.value)} />
+                <p className="text-xs text-muted-foreground">Tanzania format: +255XXXXXXXXX</p>
+              </div>
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input placeholder="email@example.com" type="email" value={editEmail} onChange={(e) => setEditEmail(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Group</Label>
+                <Select value={editGroup} onValueChange={setEditGroup}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {GROUPS.map((g) => (
+                      <SelectItem key={g} value={g}>{g}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button className="w-full" onClick={handleEditSave} disabled={saving}>
+                {saving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                Save Changes
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
