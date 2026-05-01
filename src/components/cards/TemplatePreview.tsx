@@ -122,6 +122,246 @@ export function TemplatePreview({
     </div>
   );
 
+  // ---------- Shared ornate panel used by every refined template ----------
+  const script = "'Great Vibes', cursive";
+  const serif = "'Playfair Display', serif";
+  const sans = "'Inter', sans-serif";
+
+  type PanelTheme = {
+    /** ink color for body text inside panel */
+    ink: string;
+    /** panel background gradient */
+    panelBg: string;
+    /** primary accent (frame, dividers, icons) */
+    accentColor: string;
+    /** secondary deep color used for ribbon + bottom pill */
+    deep: string;
+    /** color of tagline above title */
+    tagColor?: string;
+    /** small uppercase ribbon label */
+    ribbon: string;
+    /** large script word above the formal title */
+    scriptWord: string;
+    /** uppercase tagline above script */
+    tagline: string;
+  };
+
+  const OrnatePanel = ({
+    theme,
+    decoration,
+  }: {
+    theme: PanelTheme;
+    /** decorative SVG layer painted behind the panel */
+    decoration: React.ReactNode;
+  }) => {
+    const { ink, panelBg, accentColor, deep, ribbon, scriptWord, tagline } = theme;
+    const tagColor = theme.tagColor || ink;
+    return (
+      <>
+        {decoration}
+
+        {/* Inner panel */}
+        <div
+          className="absolute"
+          style={{
+            left: '10%',
+            right: '10%',
+            top: '7%',
+            bottom: isFull ? '13%' : '15%',
+            background: panelBg,
+            borderRadius: 8,
+            boxShadow: `inset 0 0 0 1px ${accentColor}66, 0 6px 20px rgba(0,0,0,0.18)`,
+          }}
+        />
+        <div
+          className="absolute"
+          style={{
+            left: 'calc(10% + 6px)',
+            right: 'calc(10% + 6px)',
+            top: 'calc(7% + 6px)',
+            bottom: `calc(${isFull ? '13%' : '15%'} + 6px)`,
+            border: `1px solid ${accentColor}`,
+            borderRadius: 4,
+            opacity: 0.55,
+          }}
+        />
+
+        {/* Panel content */}
+        <div
+          className="absolute flex flex-col items-center text-center"
+          style={{
+            left: '14%',
+            right: '14%',
+            top: isFull ? '10%' : '10%',
+            bottom: isFull ? '17%' : '19%',
+            color: ink,
+            justifyContent: 'space-between',
+            padding: isFull ? '8px 0' : '4px 0',
+          }}
+        >
+          {/* Top: tagline + script + ribbon */}
+          <div className="flex flex-col items-center" style={{ width: '100%' }}>
+            <svg width={isFull ? 60 : 30} height={isFull ? 14 : 8} viewBox="0 0 60 14">
+              <path d="M2 7 Q15 2 30 7 Q45 12 58 7" stroke={accentColor} strokeWidth="0.8" fill="none" />
+              <path d="M30 4 L33 7 L30 10 L27 7 Z" fill={accentColor} />
+            </svg>
+            <p
+              style={{
+                fontFamily: serif,
+                fontWeight: 700,
+                fontSize: isFull ? 12 : 6.5,
+                letterSpacing: isFull ? 2 : 1,
+                marginTop: isFull ? 8 : 4,
+                color: tagColor,
+              }}
+            >
+              {tagline}
+            </p>
+            <p
+              style={{
+                fontFamily: script,
+                fontSize: isFull ? 54 : 26,
+                lineHeight: 1,
+                color: accentColor,
+                marginTop: isFull ? 4 : 2,
+              }}
+            >
+              {scriptWord}
+            </p>
+            <div
+              className="flex items-center justify-center"
+              style={{
+                background: deep,
+                color: '#fff',
+                fontFamily: serif,
+                fontWeight: 600,
+                fontSize: isFull ? 10 : 5.5,
+                letterSpacing: isFull ? 2 : 1,
+                padding: isFull ? '5px 18px' : '2.5px 9px',
+                marginTop: isFull ? 8 : 4,
+                borderRadius: 2,
+                border: `1px solid ${accentColor}`,
+              }}
+            >
+              <span style={{ color: accentColor, marginRight: 6 }}>•</span>
+              {ribbon}
+              <span style={{ color: accentColor, marginLeft: 6 }}>•</span>
+            </div>
+          </div>
+
+          {/* Middle: names */}
+          <div className="flex flex-col items-center" style={{ width: '100%' }}>
+            {isFull && (
+              <p style={{ fontFamily: sans, fontSize: 10.5, color: ink, opacity: 0.85, lineHeight: 1.4 }}>
+                With great joy, we invite you to celebrate
+              </p>
+            )}
+            <p
+              style={{
+                fontFamily: serif,
+                fontWeight: 700,
+                fontSize: isFull ? 26 : 13,
+                color: deep,
+                lineHeight: 1.1,
+                marginTop: isFull ? 8 : 3,
+                letterSpacing: 0.5,
+              }}
+            >
+              {t}
+            </p>
+            <svg width={isFull ? 80 : 36} height={isFull ? 10 : 6} viewBox="0 0 80 10" style={{ marginTop: 4 }}>
+              <line x1="0" y1="5" x2="32" y2="5" stroke={accentColor} strokeWidth="0.6" />
+              <path d="M40 2 L44 5 L40 8 L36 5 Z" fill={accentColor} />
+              <line x1="48" y1="5" x2="80" y2="5" stroke={accentColor} strokeWidth="0.6" />
+            </svg>
+            {host && isFull && (
+              <p style={{ fontFamily: sans, fontSize: 11, color: ink, opacity: 0.85, marginTop: 6 }}>
+                Hosted by {host}
+              </p>
+            )}
+          </div>
+
+          {/* Info row */}
+          {isFull ? (
+            <div className="flex items-stretch justify-center gap-3" style={{ width: '100%' }}>
+              {[
+                { icon: <Calendar className="w-3.5 h-3.5" />, label: 'DATE', val: date ? fmtDate(date) : 'Saturday' },
+                { icon: <Clock className="w-3.5 h-3.5" />, label: 'TIME', val: time || '6:00 PM' },
+                { icon: <MapPin className="w-3.5 h-3.5" />, label: 'VENUE', val: venue || 'Venue Hall' },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-2 flex-1 justify-center px-2"
+                  style={{ borderLeft: i > 0 ? `1px solid ${accentColor}55` : 'none' }}
+                >
+                  <div
+                    className="rounded-full flex items-center justify-center shrink-0"
+                    style={{ width: 26, height: 26, border: `1.5px solid ${accentColor}`, color: deep, background: '#ffffff' }}
+                  >
+                    {item.icon}
+                  </div>
+                  <div className="text-left">
+                    <p style={{ fontFamily: serif, fontWeight: 700, fontSize: 8.5, letterSpacing: 1.2, color: ink }}>
+                      {item.label}
+                    </p>
+                    <p style={{ fontFamily: sans, fontSize: 8.5, color: ink, opacity: 0.85, lineHeight: 1.2 }}>
+                      {item.val}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center gap-1.5" style={{ marginTop: 2 }}>
+              {[Calendar, Clock, MapPin].map((Icon, i) => (
+                <div
+                  key={i}
+                  className="rounded-full flex items-center justify-center"
+                  style={{ width: 11, height: 11, border: `0.8px solid ${accentColor}`, color: deep, background: '#ffffff' }}
+                >
+                  <Icon style={{ width: 5.5, height: 5.5 }} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Bottom contact pill */}
+        <div
+          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-between"
+          style={{
+            bottom: isFull ? '4%' : '5%',
+            width: '76%',
+            background: deep,
+            color: '#fff',
+            padding: isFull ? '8px 18px' : '4px 9px',
+            borderRadius: 999,
+            border: `1px solid ${accentColor}`,
+            fontFamily: sans,
+            fontSize: isFull ? 8.5 : 4.8,
+            boxShadow: `0 4px 12px ${deep}55`,
+          }}
+        >
+          <div className="text-left">
+            <p style={{ fontFamily: serif, fontWeight: 700, letterSpacing: 1.2, color: accentColor, fontSize: isFull ? 8.5 : 4.8 }}>
+              CONTACT
+            </p>
+            <p style={{ opacity: 0.95 }}>+255 712 345 678</p>
+          </div>
+          <svg width={isFull ? 40 : 18} height={isFull ? 10 : 5} viewBox="0 0 40 10">
+            <path d="M2 5 Q10 1 20 5 Q30 9 38 5" stroke={accentColor} fill="none" strokeWidth="0.8" />
+          </svg>
+          <div className="text-right">
+            <p style={{ fontFamily: serif, fontWeight: 700, letterSpacing: 1.2, color: accentColor, fontSize: isFull ? 8.5 : 4.8 }}>
+              RSVP
+            </p>
+            <p style={{ opacity: 0.95 }}>Reply by 20th</p>
+          </div>
+        </div>
+      </>
+    );
+  };
+
   switch (template.thumbnail) {
     /* ---------- Royal Gold: dark navy + ornate gold corners ---------- */
     case 'royal-gold':
