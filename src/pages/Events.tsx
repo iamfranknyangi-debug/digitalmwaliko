@@ -51,6 +51,14 @@ export default function Events() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<EventForm>(emptyForm);
 
+  // List controls
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'upcoming' | 'today' | 'past'>('all');
+  const [sortBy, setSortBy] = useState<'date-asc' | 'date-desc' | 'title' | 'invited'>('date-asc');
+  const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 9;
+
   const fetchEvents = async () => {
     if (!user) return;
     setLoading(true);
