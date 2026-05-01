@@ -235,3 +235,301 @@ export default function Events() {
     </DashboardLayout>
   );
 }
+
+interface EventsContentProps {
+  loading: boolean;
+  events: EventWithStats[];
+  search: string;
+  setSearch: (v: string) => void;
+  statusFilter: 'all' | 'upcoming' | 'today' | 'past';
+  setStatusFilter: (v: 'all' | 'upcoming' | 'today' | 'past') => void;
+  sortBy: 'date-asc' | 'date-desc' | 'title' | 'invited';
+  setSortBy: (v: 'date-asc' | 'date-desc' | 'title' | 'invited') => void;
+  view: 'grid' | 'list';
+  setView: (v: 'grid' | 'list') => void;
+  page: number;
+  setPage: (v: number | ((p: number) => number)) => void;
+  pageSize: number;
+  openCreate: () => void;
+  openEdit: (e: EventWithStats) => void;
+  handleDelete: (id: string) => void;
+}
+
+function EventsContent({
+  loading, events, search, setSearch, statusFilter, setStatusFilter,
+  sortBy, setSortBy, view, setView, page, setPage, pageSize,
+  openCreate, openEdit, handleDelete,
+}: EventsContentProps) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+
+  const filtered = events.filter((e) => {
+    const q = search.trim().toLowerCase();
+    if (q && !`${e.title} ${e.host} ${e.venue}`.toLowerCase().includes(q)) return false;
+    const d = new Date(e.date); d.setHours(0, 0, 0, 0);
+    if (statusFilter === 'upcoming' && d < today) return false;
+    if (statusFilter === 'past' && d >= today) return false;
+    if (statusFilter === 'today' && d.getTime() !== today.getTime()) return false;
+    return true;
+  });
+
+  filtered.sort((a, b) => {
+    if (sortBy === 'title') return a.title.localeCompare(b.title);
+    if (sortBy === 'invited') return b.totalInvited - a.totalInvited;
+    const da = new Date(a.date).getTime(), db = new Date(b.date).getTime();
+    return sortBy === 'date-asc' ? da - db : db - da;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const paged = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
+
+  const upcomingCount = events.filter((e) => { const d = new Date(e.date); d.setHours(0,0,0,0); return d >= today; }).length;
+  const todayCount = events.filter((e) => { const d = new Date(e.date); d.setHours(0,0,0,0); return d.getTime() === today.getTime(); }).length;
+
+  return (
+    <>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 className="font-display text-3xl font-bold">Events</h1>
+          <p className="text-muted-foreground mt-1 text-sm">
+            {events.length} total · {upcomingCount} upcoming{todayCount > 0 ? ` · ${todayCount} today` : ''}
+          </p>
+        </div>
+        <Button className="gap-2" onClick={openCreate}>
+          <Plus className="w-4 h-4" /> New Event
+        </Button>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : events.length === 0 ? (
+        <Card className="p-12 text-center">
+          <p className="text-muted-foreground text-lg mb-4">No events yet. Create your first event!</p>
+          <Button onClick={openCreate} className="gap-2"><Plus className="w-4 h-4" /> Create Event</Button>
+        </Card>
+      ) : (
+        <>
+          <Card className="p-3 sm:p-4">
+            <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
+              <div className="relative flex-1 min-w-0">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={search}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                  placeholder="Search by title, host, or venue…"
+                  className="pl-9 pr-9"
+                />
+                {search && (
+                  <button onClick={() => setSearch('')} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground" aria-label="Clear search">
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-2 items-center">
+                {(['all', 'upcoming', 'today', 'past'] as const).map((s) => (
+                  <Button
+                    key={s}
+                    size="sm"
+                    variant={statusFilter === s ? 'default' : 'outline'}
+                    onClick={() => { setStatusFilter(s); setPage(1); }}
+                    className="capitalize"
+                  >
+                    {s}
+                  </Button>
+                ))}
+              </div>
+
+              <div className="flex gap-2 items-center">
+                <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+                  <SelectTrigger className="w-[150px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="date-asc">Date ↑</SelectItem>
+                    <SelectItem value="date-desc">Date ↓</SelectItem>
+                    <SelectItem value="title">Title A–Z</SelectItem>
+                    <SelectItem value="invited">Most invited</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="flex border rounded-md overflow-hidden">
+                  <Button size="icon" variant={view === 'grid' ? 'default' : 'ghost'} className="rounded-none h-9 w-9" onClick={() => setView('grid')} aria-label="Grid view">
+                    <LayoutGrid className="w-4 h-4" />
+                  </Button>
+                  <Button size="icon" variant={view === 'list' ? 'default' : 'ghost'} className="rounded-none h-9 w-9" onClick={() => setView('list')} aria-label="List view">
+                    <List className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {filtered.length === 0 ? (
+            <Card className="p-12 text-center">
+              <p className="text-muted-foreground">No events match your filters.</p>
+              <Button variant="outline" className="mt-4" onClick={() => { setSearch(''); setStatusFilter('all'); }}>Clear filters</Button>
+            </Card>
+          ) : (
+            <>
+              <div className={view === 'grid' ? 'grid md:grid-cols-2 lg:grid-cols-3 gap-6' : 'flex flex-col gap-3'}>
+                {paged.map((event, i) => {
+                  const confirmRate = event.totalInvited > 0 ? Math.round((event.confirmed / event.totalInvited) * 100) : 0;
+                  const eventDate = new Date(event.date); eventDate.setHours(0, 0, 0, 0);
+                  const isPast = eventDate < today;
+                  const isToday = eventDate.getTime() === today.getTime();
+                  const statusBadge = isToday
+                    ? <Badge className="bg-primary text-primary-foreground">Today</Badge>
+                    : isPast
+                      ? <Badge variant="secondary">Past</Badge>
+                      : <Badge className="bg-success text-success-foreground">Upcoming</Badge>;
+
+                  if (view === 'list') {
+                    return (
+                      <motion.div key={event.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
+                        <Card className="hover:shadow-md transition-shadow">
+                          <div className="flex flex-col md:flex-row md:items-center gap-4 p-4">
+                            <div className="flex items-center justify-center md:w-20 h-16 md:h-20 rounded-lg bg-gradient-to-br from-primary/80 to-primary text-primary-foreground flex-shrink-0">
+                              <div className="text-center">
+                                <p className="text-xs uppercase tracking-wide opacity-90">{eventDate.toLocaleString('en-GB', { month: 'short' })}</p>
+                                <p className="text-2xl font-bold leading-none">{eventDate.getDate()}</p>
+                              </div>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start gap-2 flex-wrap">
+                                <h3 className="font-display text-lg font-semibold truncate">{event.title}</h3>
+                                {statusBadge}
+                              </div>
+                              <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground mt-1">
+                                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {event.time}</span>
+                                <span className="flex items-center gap-1 truncate"><MapPin className="w-3.5 h-3.5" /> {event.venue || '—'}</span>
+                                <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {event.totalInvited} invited</span>
+                              </div>
+                            </div>
+                            {event.totalInvited > 0 && (
+                              <div className="md:w-40">
+                                <div className="flex justify-between text-xs mb-1">
+                                  <span className="text-muted-foreground">RSVP</span>
+                                  <span className="font-semibold">{confirmRate}%</span>
+                                </div>
+                                <Progress value={confirmRate} className="h-2" />
+                              </div>
+                            )}
+                            <div className="flex gap-1">
+                              <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => openEdit(event)} aria-label="Edit">
+                                <Pencil className="w-4 h-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive" aria-label="Delete">
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete "{event.title}"?</AlertDialogTitle>
+                                    <AlertDialogDescription>This action cannot be undone. All invitations for this event will also be removed.</AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDelete(event.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </div>
+                        </Card>
+                      </motion.div>
+                    );
+                  }
+
+                  return (
+                    <motion.div key={event.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
+                      <Card className="overflow-hidden hover:shadow-lg transition-shadow group">
+                        <div className="h-32 bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center relative">
+                          <h3 className="font-display text-xl font-bold text-primary-foreground text-center px-4 drop-shadow">{event.title}</h3>
+                          <div className="absolute top-2 left-2">{statusBadge}</div>
+                          <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button size="icon" variant="ghost" className="h-8 w-8 bg-background/20 hover:bg-background/40 text-primary-foreground" onClick={() => openEdit(event)}>
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button size="icon" variant="ghost" className="h-8 w-8 bg-background/20 hover:bg-destructive/80 text-primary-foreground">
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Delete "{event.title}"?</AlertDialogTitle>
+                                  <AlertDialogDescription>This action cannot be undone. All invitations for this event will also be removed.</AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction onClick={() => handleDelete(event.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </div>
+                        <CardContent className="p-5 space-y-4">
+                          <div className="space-y-2 text-sm text-muted-foreground">
+                            <p className="flex items-center gap-2"><Calendar className="w-4 h-4" /> {new Date(event.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                            <p className="flex items-center gap-2"><Clock className="w-4 h-4" /> {event.time}</p>
+                            <p className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {event.venue || 'No venue set'}</p>
+                          </div>
+
+                          {event.totalInvited > 0 && (
+                            <>
+                              <div>
+                                <div className="flex items-center justify-between text-sm mb-1">
+                                  <span className="text-muted-foreground">RSVP Progress</span>
+                                  <span className="font-semibold text-foreground">{confirmRate}%</span>
+                                </div>
+                                <Progress value={confirmRate} className="h-2" />
+                              </div>
+                              <div className="flex justify-between text-center">
+                                <div>
+                                  <p className="text-lg font-bold text-foreground">{event.totalInvited}</p>
+                                  <p className="text-xs text-muted-foreground">Invited</p>
+                                </div>
+                                <div>
+                                  <p className="text-lg font-bold text-success">{event.confirmed}</p>
+                                  <p className="text-xs text-success">Confirmed</p>
+                                </div>
+                                <div>
+                                  <p className="text-lg font-bold text-warning">{event.pending}</p>
+                                  <p className="text-xs text-warning">Pending</p>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              {totalPages > 1 && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+                  <p className="text-sm text-muted-foreground">
+                    Showing {(safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, filtered.length)} of {filtered.length}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="outline" disabled={safePage === 1} onClick={() => setPage((p) => Math.max(1, p - 1))} className="gap-1">
+                      <ChevronLeft className="w-4 h-4" /> Prev
+                    </Button>
+                    <span className="text-sm font-medium px-2">Page {safePage} / {totalPages}</span>
+                    <Button size="sm" variant="outline" disabled={safePage === totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))} className="gap-1">
+                      Next <ChevronRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </>
+      )}
+    </>
+  );
+}
