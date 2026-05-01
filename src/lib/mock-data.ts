@@ -64,12 +64,15 @@ export const mockInvitations: Invitation[] = [
 ];
 
 export const mockTemplates: CardTemplate[] = [
-  { id: '1', name: 'Royal Gold Wedding', category: 'wedding', thumbnail: '', colors: ['#D4A574', '#1a1a2e', '#f5f0e8'], font: 'Playfair Display' },
-  { id: '2', name: 'Tropical Paradise', category: 'wedding', thumbnail: '', colors: ['#2d6a4f', '#d4a574', '#f5f0e8'], font: 'Playfair Display' },
-  { id: '3', name: 'Confetti Celebration', category: 'birthday', thumbnail: '', colors: ['#e07c24', '#3498db', '#f39c12'], font: 'Inter' },
-  { id: '4', name: 'Elegant Corporate', category: 'corporate', thumbnail: '', colors: ['#1a1a2e', '#3498db', '#ecf0f1'], font: 'Inter' },
-  { id: '5', name: 'Pastel Dreams', category: 'baby-shower', thumbnail: '', colors: ['#f8b4c8', '#b8d4e3', '#f5f0e8'], font: 'Playfair Display' },
-  { id: '6', name: 'Graduation Cap', category: 'graduation', thumbnail: '', colors: ['#1a1a2e', '#d4a574', '#ffffff'], font: 'Playfair Display' },
+  { id: '1', name: 'Royal Gold', category: 'wedding', thumbnail: 'royal-gold', colors: ['#1a1a2e', '#0f0f1e', '#D4A574'], font: 'Playfair Display' },
+  { id: '2', name: 'Emerald Botanical', category: 'wedding', thumbnail: 'emerald-botanical', colors: ['#0f3d2e', '#1a5c44', '#d4a574'], font: 'Playfair Display' },
+  { id: '3', name: 'Blush Minimal', category: 'wedding', thumbnail: 'blush-minimal', colors: ['#fdf2f0', '#e8c5b8', '#8b4a3a'], font: 'Playfair Display' },
+  { id: '4', name: 'Confetti Pop', category: 'birthday', thumbnail: 'confetti-pop', colors: ['#7c3aed', '#ec4899', '#fbbf24'], font: 'Inter' },
+  { id: '5', name: 'Midnight Bloom', category: 'birthday', thumbnail: 'midnight-bloom', colors: ['#0c0a1f', '#3b1d6b', '#f0c674'], font: 'Playfair Display' },
+  { id: '6', name: 'Executive Navy', category: 'corporate', thumbnail: 'executive-navy', colors: ['#0a1628', '#1e3a5f', '#c9a961'], font: 'Inter' },
+  { id: '7', name: 'Modern Mono', category: 'corporate', thumbnail: 'modern-mono', colors: ['#fafafa', '#171717', '#737373'], font: 'Inter' },
+  { id: '8', name: 'Pastel Cloud', category: 'baby-shower', thumbnail: 'pastel-cloud', colors: ['#fef3f7', '#fbcfe8', '#7dd3fc'], font: 'Playfair Display' },
+  { id: '9', name: 'Scholar Crest', category: 'graduation', thumbnail: 'scholar-crest', colors: ['#1a1a2e', '#7a1f2b', '#d4a574'], font: 'Playfair Display' },
 ];
 
 export const chartData = {
