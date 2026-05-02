@@ -95,7 +95,7 @@ export default function SendInvites() {
 
       // 3. Send SMS via edge function
       const { data: smsResult, error: smsError } = await supabase.functions.invoke('send-sms', {
-        body: { recipients, message },
+        body: { recipients, message, app_origin: window.location.origin },
       });
 
       if (smsError) throw smsError;

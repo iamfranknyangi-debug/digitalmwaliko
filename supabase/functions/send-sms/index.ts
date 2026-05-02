@@ -39,7 +39,7 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) throw new Error("Unauthorized");
 
-    const { recipients, message } = await req.json();
+    const { recipients, message, app_origin } = await req.json();
 
     // Validate message
     if (typeof message !== "string" || message.trim().length === 0) {
@@ -104,17 +104,20 @@ serve(async (req) => {
     // Send SMS to each validated recipient via Sprint API
     const results = await Promise.allSettled(
       validatedRecipients.map(async (r: { phone: string; name: string; invitation_id: string }) => {
+        // Normalize Tanzanian phone numbers to international format (255XXXXXXXXX)
         let phone = r.phone.replace(/[^0-9]/g, "");
-        if (phone.startsWith("0")) {
-          phone = "255" + phone.substring(1);
-        }
-        if (!phone.startsWith("255") && phone.length <= 10) {
-          phone = "255" + phone;
-        }
+        if (phone.startsWith("00")) phone = phone.substring(2);
+        if (phone.startsWith("0")) phone = "255" + phone.substring(1);
+        if (!phone.startsWith("255")) phone = "255" + phone;
+
+        const baseOrigin = (typeof app_origin === "string" && app_origin.startsWith("http"))
+          ? app_origin.replace(/\/$/, "")
+          : "https://digitalmwaliko.lovable.app";
+        const rsvpLink = `${baseOrigin}/rsvp/${r.invitation_id}`;
 
         const personalizedMessage = message
-          .replace("{name}", r.name)
-          .replace("{rsvp_link}", `${supabaseUrl.replace('.supabase.co', '')}-rsvp.lovable.app/rsvp/${r.invitation_id}`);
+          .replaceAll("{name}", r.name)
+          .replaceAll("{rsvp_link}", rsvpLink);
 
         const smsPayload = {
           api_id: SPRINT_API_ID,
@@ -126,16 +129,23 @@ serve(async (req) => {
           textmessage: personalizedMessage,
         };
 
-        const response = await fetch(`${SPRINT_API_URL}/api/SendSMS`, {
+        const apiBase = SPRINT_API_URL.replace(/\/$/, "");
+        const endpoint = apiBase.endsWith("/api") ? `${apiBase}/SendSMS` : `${apiBase}/api/SendSMS`;
+
+        const response = await fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(smsPayload),
         });
 
-        const data = await response.json();
+        const rawText = await response.text();
+        let data: { status?: string; remarks?: string; message_id?: number | string } = {};
+        try { data = JSON.parse(rawText); } catch { /* non-JSON response */ }
 
-        if (data.status !== "S") {
-          throw new Error(`SMS failed for ${phone}: ${data.remarks || "Unknown error"}`);
+        if (!response.ok || data.status !== "S") {
+          throw new Error(
+            `SMS failed for ${phone}: ${data.remarks || rawText || `HTTP ${response.status}`}`
+          );
         }
 
         return { phone, message_id: data.message_id, status: "sent" };
