@@ -114,8 +114,9 @@ export default function SendInvites() {
       });
 
       if (smsResult?.failed > 0) {
+        const firstError = Array.isArray(smsResult.errors) ? smsResult.errors[0] : '';
         toast.warning(
-          `SMS ${smsResult.sent} zimetumwa, ${smsResult.failed} zimeshindwa. Angalia nambari za simu.`
+          firstError || `SMS ${smsResult.sent} zimetumwa, ${smsResult.failed} zimeshindwa.`
         );
       } else {
         toast.success(`SMS ${smsResult?.sent || selectedContacts.length} zimetumwa kwa mafanikio! 🎉`);

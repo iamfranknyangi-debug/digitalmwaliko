@@ -16,10 +16,10 @@ serve(async (req) => {
   }
 
   try {
-    const SPRINT_API_URL = Deno.env.get("SPRINT_API_URL");
-    const SPRINT_API_ID = Deno.env.get("SPRINT_API_ID");
-    const SPRINT_API_PASSWORD = Deno.env.get("SPRINT_API_PASSWORD");
-    const SPRINT_SENDER_ID = Deno.env.get("SPRINT_SENDER_ID");
+    const SPRINT_API_URL = Deno.env.get("SPRINT_API_URL")?.trim();
+    const SPRINT_API_ID = Deno.env.get("SPRINT_API_ID")?.trim();
+    const SPRINT_API_PASSWORD = Deno.env.get("SPRINT_API_PASSWORD")?.trim();
+    const SPRINT_SENDER_ID = Deno.env.get("SPRINT_SENDER_ID")?.trim();
 
     if (!SPRINT_API_URL) throw new Error("SPRINT_API_URL is not configured");
     if (!SPRINT_API_ID) throw new Error("SPRINT_API_ID is not configured");
@@ -126,11 +126,12 @@ serve(async (req) => {
           encoding: "T",
           sender_id: SPRINT_SENDER_ID,
           phonenumber: phone,
+          templateid: null,
           textmessage: personalizedMessage,
         };
 
         const apiBase = SPRINT_API_URL.replace(/\/$/, "");
-        const endpoint = apiBase.endsWith("/api") ? `${apiBase}/SendSMS` : `${apiBase}/api/SendSMS`;
+        const endpoint = apiBase.toLowerCase().endsWith("/api") ? `${apiBase}/SendSMS/` : `${apiBase}/api/SendSMS/`;
 
         const response = await fetch(endpoint, {
           method: "POST",
@@ -139,10 +140,18 @@ serve(async (req) => {
         });
 
         const rawText = await response.text();
-        let data: { status?: string; remarks?: string; message_id?: number | string } = {};
+        let data: { status?: string; remarks?: string; message_id?: number | string; success?: boolean } = {};
         try { data = JSON.parse(rawText); } catch { /* non-JSON response */ }
 
-        if (!response.ok || data.status !== "S") {
+        const sentSuccessfully = response.ok && (data.status === "S" || data.success === true);
+
+        if (!sentSuccessfully) {
+          console.error("Sprint SMS provider rejected message", {
+            endpoint,
+            phone,
+            httpStatus: response.status,
+            remarks: data.remarks || rawText || null,
+          });
           throw new Error(
             `SMS failed for ${phone}: ${data.remarks || rawText || `HTTP ${response.status}`}`
           );
