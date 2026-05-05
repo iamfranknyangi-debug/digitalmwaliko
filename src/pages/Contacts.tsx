@@ -65,17 +65,29 @@ export default function Contacts() {
     return matchesSearch && matchesGroup;
   });
 
-  const validateTzPhone = (phone: string) => /^\+255\d{9}$/.test(phone.replace(/\s/g, ''));
+  // Accepts: +255XXXXXXXXX, 255XXXXXXXXX, 0XXXXXXXXX, or 9-digit local
+  const validateTzPhone = (phone: string) => {
+    const p = phone.replace(/[\s\-()]/g, '');
+    return /^\+?255\d{9}$/.test(p) || /^0\d{9}$/.test(p) || /^\d{9}$/.test(p);
+  };
+
+  const normalizeTzPhone = (phone: string) => {
+    let p = phone.replace(/[\s\-()]/g, '');
+    if (p.startsWith('+')) p = p.slice(1);
+    if (p.startsWith('0') && p.length === 10) p = '255' + p.slice(1);
+    if (/^\d{9}$/.test(p)) p = '255' + p;
+    return p;
+  };
 
   const handleAdd = async () => {
     if (!user) return;
     if (!newName.trim() || !newPhone.trim()) return toast.error('Name and phone are required');
-    if (!validateTzPhone(newPhone)) return toast.error('Invalid TZ phone. Use +255XXXXXXXXX format.');
+    if (!validateTzPhone(newPhone)) return toast.error('Invalid TZ phone. Use 255XXXXXXXXX or 0XXXXXXXXX.');
 
     setSaving(true);
     const { error } = await supabase.from('contacts').insert({
       name: newName.trim(),
-      phone: newPhone.trim(),
+      phone: normalizeTzPhone(newPhone),
       email: newEmail.trim() || null,
       group: newGroup,
       user_id: user.id,
@@ -99,15 +111,7 @@ export default function Contacts() {
       skipEmptyLines: true,
       transformHeader: (h) => h.trim().toLowerCase(),
       complete: async (results) => {
-        const normalizePhone = (raw: string) => {
-          let p = String(raw).replace(/[\s\-()]/g, '').trim();
-          if (!p) return '';
-          if (p.startsWith('+')) return p;
-          if (p.startsWith('255')) return '+' + p;
-          if (p.startsWith('0') && p.length === 10) return '+255' + p.slice(1);
-          if (/^\d{9}$/.test(p)) return '+255' + p;
-          return p;
-        };
+        const normalizePhone = (raw: string) => normalizeTzPhone(String(raw));
 
         const data = results.data as any[];
         const rows: any[] = [];
@@ -180,14 +184,14 @@ export default function Contacts() {
   const handleEditSave = async () => {
     if (!user || !editContact) return;
     if (!editName.trim() || !editPhone.trim()) return toast.error('Name and phone are required');
-    if (!validateTzPhone(editPhone)) return toast.error('Invalid TZ phone. Use +255XXXXXXXXX format.');
+    if (!validateTzPhone(editPhone)) return toast.error('Invalid TZ phone. Use 255XXXXXXXXX or 0XXXXXXXXX.');
 
     setSaving(true);
     const { error } = await supabase
       .from('contacts')
       .update({
         name: editName.trim(),
-        phone: editPhone.trim(),
+        phone: normalizeTzPhone(editPhone),
         email: editEmail.trim() || null,
         group: editGroup,
       })
@@ -231,8 +235,8 @@ export default function Contacts() {
                   </div>
                   <div className="space-y-2">
                     <Label>Phone Number *</Label>
-                    <Input placeholder="+255712345678" value={newPhone} onChange={(e) => setNewPhone(e.target.value)} />
-                    <p className="text-xs text-muted-foreground">Tanzania format: +255XXXXXXXXX</p>
+                    <Input placeholder="255712345678" value={newPhone} onChange={(e) => setNewPhone(e.target.value)} />
+                    <p className="text-xs text-muted-foreground">Format: 255XXXXXXXXX (au 0XXXXXXXXX)</p>
                   </div>
                   <div className="space-y-2">
                     <Label>Email</Label>
@@ -344,8 +348,8 @@ export default function Contacts() {
               </div>
               <div className="space-y-2">
                 <Label>Phone Number *</Label>
-                <Input placeholder="+255712345678" value={editPhone} onChange={(e) => setEditPhone(e.target.value)} />
-                <p className="text-xs text-muted-foreground">Tanzania format: +255XXXXXXXXX</p>
+                <Input placeholder="255712345678" value={editPhone} onChange={(e) => setEditPhone(e.target.value)} />
+                <p className="text-xs text-muted-foreground">Format: 255XXXXXXXXX (au 0XXXXXXXXX)</p>
               </div>
               <div className="space-y-2">
                 <Label>Email</Label>
